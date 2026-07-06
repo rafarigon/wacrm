@@ -532,3 +532,31 @@ export interface AutomationLog {
   created_at: string;
   contact?: Contact;
 }
+
+// ---- Leads imobiliários (personalização RR) ----
+
+export type LeadEtapa =
+  | "novo"
+  | "atendimento"
+  | "visita"
+  | "proposta"
+  | "vendido"
+  | "perdido";
+
+export interface Lead {
+  id: string;
+  account_id: string;
+  user_id: string;
+  nome: string;
+  telefone: string | null;
+  email: string | null;
+  imovel: string | null;
+  origem: string | null;
+  /** 0-100 — ≥85 quente, 50-84 morno, <50 frio */
+  score: number;
+  etapa: LeadEtapa;
+  data_visita: string | null;
+  notas: string | null;
+  created_at: string;
+  updated_at?: string;
+}
