@@ -60,6 +60,11 @@ export function LeadList({ leads, onEditLead, onEtapaChange }: LeadListProps) {
               >
                 <TableCell className="font-medium text-white">
                   {lead.nome}
+                  {lead.corretor_nome && (
+                    <div className="text-[10.5px] font-normal text-slate-500">
+                      via {lead.corretor_nome}
+                    </div>
+                  )}
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col gap-0.5 text-xs">

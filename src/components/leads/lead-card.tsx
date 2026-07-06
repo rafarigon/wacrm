@@ -5,6 +5,7 @@ import {
   Building2,
   Calendar,
   Flame,
+  Handshake,
   Mail,
   MessageCircle,
   Phone,
@@ -118,6 +119,16 @@ export function LeadCard({ lead, onEdit, isOverlay }: LeadCardProps) {
           {fmtDataCurta(lead.data_visita ?? lead.created_at)}
         </span>
       </div>
+
+      {lead.corretor_nome && (
+        <div
+          title={`Lead do Portal do Corretor — ${lead.corretor_nome}`}
+          className="mt-2 flex items-center gap-1.5 pl-1 text-[10.5px] text-slate-500"
+        >
+          <Handshake className="h-3 w-3 shrink-0" />
+          <span className="truncate">via {lead.corretor_nome}</span>
+        </div>
+      )}
 
       {wa && (
         <a

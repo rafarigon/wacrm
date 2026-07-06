@@ -557,6 +557,9 @@ export interface Lead {
   etapa: LeadEtapa;
   data_visita: string | null;
   notas: string | null;
+  /** Preenchidos quando o lead veio do Portal do Corretor (sync RR). */
+  external_id?: string | null;
+  corretor_nome?: string | null;
   created_at: string;
   updated_at?: string;
 }
