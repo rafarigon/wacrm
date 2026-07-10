@@ -36,11 +36,44 @@ async function throwWahaError(response: Response, fallback: string): Promise<nev
 /**
  * WAHA addresses 1:1 chats as `<digits>@c.us`. Accepts a phone in any
  * of the formats the CRM stores (E.164 with or without `+`) and returns
- * the chatId WAHA expects.
+ * the chatId WAHA expects. The CRM stores Brazilian numbers in national
+ * format (DDD + number, 10-11 digits) — prepend the country code.
  */
 export function chatIdFromPhone(phone: string): string {
-  const digits = phone.replace(/\D/g, '')
+  let digits = phone.replace(/\D/g, '')
+  if (digits.length === 10 || digits.length === 11) digits = `55${digits}`
   return `${digits}@c.us`
+}
+
+export interface ResolveChatIdArgs {
+  baseUrl: string
+  apiKey: string
+  session: string
+  phone: string
+}
+
+/**
+ * Resolve a phone to the account's canonical chatId via WAHA's
+ * check-exists. Required for Brazilian mobiles: numbers registered
+ * before the ninth digit keep the 12-digit WhatsApp id, and sending to
+ * the 13-digit form fails with "no LID found". Falls back to the
+ * heuristic chatId when the lookup fails so a WAHA hiccup degrades to
+ * the old behavior instead of blocking the send.
+ */
+export async function resolveChatId(args: ResolveChatIdArgs): Promise<string> {
+  const { baseUrl, apiKey, session, phone } = args
+  const fallback = chatIdFromPhone(phone)
+  try {
+    const digits = fallback.split('@')[0]
+    const url = `${baseUrl.replace(/\/+$/, '')}/api/contacts/check-exists?phone=${digits}&session=${encodeURIComponent(session)}`
+    const response = await fetch(url, { headers: { 'X-Api-Key': apiKey } })
+    if (!response.ok) return fallback
+    const data = (await response.json()) as { numberExists?: boolean; chatId?: string }
+    if (data.numberExists && data.chatId) return data.chatId
+    return fallback
+  } catch {
+    return fallback
+  }
 }
 
 /**
@@ -116,7 +149,7 @@ export async function sendTextMessage(
   if (!text) throw new Error('sendTextMessage requires text.')
   const body: Record<string, unknown> = {
     session,
-    chatId: chatIdFromPhone(to),
+    chatId: await resolveChatId({ baseUrl, apiKey, session, phone: to }),
     text,
   }
   if (contextMessageId) body.reply_to = contextMessageId
@@ -161,7 +194,7 @@ export async function sendMediaMessage(
 
   const body: Record<string, unknown> = {
     session,
-    chatId: chatIdFromPhone(to),
+    chatId: await resolveChatId({ baseUrl, apiKey, session, phone: to }),
     file,
   }
   if (caption) body.caption = caption
