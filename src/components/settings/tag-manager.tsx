@@ -152,8 +152,8 @@ export function TagManager() {
     <div className="space-y-4 mt-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">Tags</h2>
-          <p className="text-sm text-slate-400">Organize your contacts with color-coded tags.</p>
+          <h2 className="text-lg font-semibold text-gray-900">Tags</h2>
+          <p className="text-sm text-gray-500">Organize your contacts with color-coded tags.</p>
         </div>
         <Button
           onClick={() => {
@@ -169,14 +169,14 @@ export function TagManager() {
       </div>
 
       {tags.length === 0 ? (
-        <Card className="bg-slate-900 border-slate-700 ring-0 ring-transparent">
+        <Card className="bg-gray-50 border-gray-200 ring-0 ring-transparent">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="text-slate-400 text-sm">No tags yet.</p>
-            <p className="text-slate-500 text-xs mt-1">Create tags to categorize your contacts.</p>
+            <p className="text-gray-500 text-sm">No tags yet.</p>
+            <p className="text-gray-400 text-xs mt-1">Create tags to categorize your contacts.</p>
           </CardContent>
         </Card>
       ) : (
-        <Card className="bg-slate-900 border-slate-700 ring-0 ring-transparent">
+        <Card className="bg-gray-50 border-gray-200 ring-0 ring-transparent">
           <CardContent className="pt-4">
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => (
@@ -209,22 +209,22 @@ export function TagManager() {
 
       {/* New Tag Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="bg-slate-900 border-slate-700 sm:max-w-sm">
+        <DialogContent className="bg-gray-50 border-gray-200 sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle className="text-white">New Tag</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogTitle className="text-gray-900">New Tag</DialogTitle>
+            <DialogDescription className="text-gray-500">
               Create a new tag with a name and color.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label className="text-slate-300">Tag Name</Label>
+              <Label className="text-gray-700">Tag Name</Label>
               <Input
                 placeholder="e.g. VIP Customer"
                 value={newTagName}
                 onChange={(e) => setNewTagName(e.target.value)}
-                className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
+                className="bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleCreate();
                 }}
@@ -232,7 +232,7 @@ export function TagManager() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-slate-300">Color</Label>
+              <Label className="text-gray-700">Color</Label>
               <div className="flex gap-2 flex-wrap">
                 {PRESET_COLORS.map((color) => (
                   <button
@@ -251,7 +251,7 @@ export function TagManager() {
 
             {/* Preview */}
             <div className="space-y-2">
-              <Label className="text-slate-300">Preview</Label>
+              <Label className="text-gray-700">Preview</Label>
               <div>
                 <span
                   className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium"
@@ -271,11 +271,11 @@ export function TagManager() {
             </div>
           </div>
 
-          <DialogFooter className="bg-slate-900 border-slate-700">
+          <DialogFooter className="bg-gray-50 border-gray-200">
             <Button
               variant="outline"
               onClick={() => setDialogOpen(false)}
-              className="border-slate-700 text-slate-300 hover:bg-slate-800"
+              className="border-gray-200 text-gray-700 hover:bg-gray-50"
             >
               Cancel
             </Button>
@@ -299,19 +299,19 @@ export function TagManager() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="bg-slate-900 border-slate-700 sm:max-w-sm">
+        <DialogContent className="bg-gray-50 border-gray-200 sm:max-w-sm">
           <DialogHeader>
-            <DialogTitle className="text-white">Delete Tag</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogTitle className="text-gray-900">Delete Tag</DialogTitle>
+            <DialogDescription className="text-gray-500">
               Are you sure you want to delete the tag &quot;{tagToDelete?.name}&quot;? This will remove
               it from all contacts. This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="bg-slate-900 border-slate-700">
+          <DialogFooter className="bg-gray-50 border-gray-200">
             <Button
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
-              className="border-slate-700 text-slate-300 hover:bg-slate-800"
+              className="border-gray-200 text-gray-700 hover:bg-gray-50"
             >
               Cancel
             </Button>

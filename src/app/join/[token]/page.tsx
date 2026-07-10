@@ -220,10 +220,10 @@ export default function JoinPage() {
   // ----- Loading state (peek pending OR auth not yet resolved) -----
   if (peek === null || authedUserId === undefined) {
     return (
-      <Card className="w-full max-w-md border-slate-800 bg-slate-900">
+      <Card className="w-full max-w-md border-gray-200 bg-gray-50">
         <CardContent className="flex flex-col items-center gap-3 py-12">
           <Loader2 className="size-6 animate-spin text-primary" />
-          <p className="text-sm text-slate-400">Verifying invitation…</p>
+          <p className="text-sm text-gray-500">Verifying invitation…</p>
         </CardContent>
       </Card>
     );
@@ -233,13 +233,13 @@ export default function JoinPage() {
   if (!peek.ok) {
     const copy = FAIL_COPY[peek.reason];
     return (
-      <Card className="w-full max-w-md border-slate-800 bg-slate-900">
+      <Card className="w-full max-w-md border-gray-200 bg-gray-50">
         <CardHeader className="items-center text-center">
           <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/10">
-            <MailX className="h-6 w-6 text-red-400" />
+            <MailX className="h-6 w-6 text-red-600" />
           </div>
-          <CardTitle className="text-xl text-white">{copy.title}</CardTitle>
-          <CardDescription className="text-slate-400">
+          <CardTitle className="text-xl text-gray-900">{copy.title}</CardTitle>
+          <CardDescription className="text-gray-500">
             {copy.body}
           </CardDescription>
         </CardHeader>
@@ -262,7 +262,7 @@ export default function JoinPage() {
               <Link href="/signup">
                 <Button
                   variant="outline"
-                  className="w-full border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white"
+                  className="w-full border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                 >
                   Create a new account instead
                 </Button>
@@ -278,7 +278,7 @@ export default function JoinPage() {
               <Link href="/login">
                 <Button
                   variant="outline"
-                  className="w-full border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white"
+                  className="w-full border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                 >
                   Sign in
                 </Button>
@@ -296,13 +296,13 @@ export default function JoinPage() {
       <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
         <UsersRound className="h-6 w-6 text-primary" />
       </div>
-      <CardTitle className="text-xl text-white">
+      <CardTitle className="text-xl text-gray-900">
         You&apos;re invited to{' '}
         <span className="text-primary">{peek.account_name}</span>
       </CardTitle>
-      <CardDescription className="text-slate-400">
+      <CardDescription className="text-gray-500">
         You&apos;ll join as{' '}
-        <span className="inline-flex items-center gap-1 text-white">
+        <span className="inline-flex items-center gap-1 text-gray-900">
           <ShieldCheck className="size-3.5 text-primary" />
           {ROLE_LABEL[peek.role]}
         </span>
@@ -321,7 +321,7 @@ export default function JoinPage() {
   if (authedUserId) {
     return (
       <>
-        <Card className="w-full max-w-md border-slate-800 bg-slate-900">
+        <Card className="w-full max-w-md border-gray-200 bg-gray-50">
           {inviteHeader}
           <CardContent className="flex flex-col gap-3">
             <Button
@@ -341,9 +341,9 @@ export default function JoinPage() {
                 </>
               )}
             </Button>
-            <p className="text-center text-xs text-slate-500">
+            <p className="text-center text-xs text-gray-400">
               Accepting moves your login into{' '}
-              <span className="text-slate-400">{peek.account_name}</span>. Your
+              <span className="text-gray-500">{peek.account_name}</span>. Your
               empty personal account from signup will be cleaned up.
             </p>
           </CardContent>
@@ -359,30 +359,30 @@ export default function JoinPage() {
             if (!open) setConflictMessage(null);
           }}
         >
-          <DialogContent className="bg-slate-900 border-slate-700 sm:max-w-md">
+          <DialogContent className="bg-gray-50 border-gray-200 sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-white">
-                <AlertTriangle className="size-4 text-amber-400" />
+              <DialogTitle className="flex items-center gap-2 text-gray-900">
+                <AlertTriangle className="size-4 text-amber-600" />
                 Can&apos;t join {peek.account_name} with this account
               </DialogTitle>
-              <DialogDescription className="text-slate-400">
+              <DialogDescription className="text-gray-500">
                 {conflictMessage}
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-2 py-2 text-xs text-slate-500">
+            <div className="space-y-2 py-2 text-xs text-gray-400">
               <p>
                 To join{' '}
-                <span className="text-slate-300">{peek.account_name}</span>,
+                <span className="text-gray-700">{peek.account_name}</span>,
                 sign out and sign up again with a different email address.
                 The invite link stays valid as long as it hasn&apos;t
                 expired.
               </p>
             </div>
-            <DialogFooter className="bg-slate-900 border-slate-700">
+            <DialogFooter className="bg-gray-50 border-gray-200">
               <Button
                 variant="outline"
                 onClick={() => setConflictMessage(null)}
-                className="border-slate-700 text-slate-300 hover:bg-slate-800"
+                className="border-gray-200 text-gray-700 hover:bg-gray-50"
               >
                 Stay signed in
               </Button>
@@ -409,7 +409,7 @@ export default function JoinPage() {
 
   // ----- Not authed: prompt to sign up or sign in -----
   return (
-    <Card className="w-full max-w-md border-slate-800 bg-slate-900">
+    <Card className="w-full max-w-md border-gray-200 bg-gray-50">
       {inviteHeader}
       <CardContent className="flex flex-col gap-2">
         <Link href={`/signup?invite=${encodeURIComponent(token!)}`}>
@@ -420,7 +420,7 @@ export default function JoinPage() {
         <Link href={`/login?invite=${encodeURIComponent(token!)}`}>
           <Button
             variant="outline"
-            className="w-full border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white"
+            className="w-full border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
           >
             I already have an account
           </Button>

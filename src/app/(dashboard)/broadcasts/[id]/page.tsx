@@ -50,15 +50,15 @@ interface StatCardProps {
 function StatCard({ label, value, total, icon, color }: StatCardProps) {
   const pct = total > 0 ? Math.round((value / total) * 100) : 0;
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
+    <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
       <div className="flex items-center justify-between">
         <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${color}`}>
           {icon}
         </div>
-        <span className="text-xs text-slate-500">{pct}%</span>
+        <span className="text-xs text-gray-400">{pct}%</span>
       </div>
-      <p className="mt-3 text-2xl font-bold text-white">{value.toLocaleString()}</p>
-      <p className="text-xs text-slate-400">{label}</p>
+      <p className="mt-3 text-2xl font-bold text-gray-900">{value.toLocaleString()}</p>
+      <p className="text-xs text-gray-500">{label}</p>
     </div>
   );
 }
@@ -77,8 +77,8 @@ interface FunnelStep {
 function FunnelChart({ steps }: { steps: FunnelStep[] }) {
   const max = Math.max(...steps.map((s) => s.value), 1);
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-      <h3 className="mb-4 text-sm font-medium text-white">Funnel</h3>
+    <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+      <h3 className="mb-4 text-sm font-medium text-gray-900">Funnel</h3>
       <div className="space-y-2">
         {steps.map((step) => {
           const pctOfMax = Math.max(5, Math.round((step.value / max) * 100));
@@ -88,17 +88,17 @@ function FunnelChart({ steps }: { steps: FunnelStep[] }) {
               : 0;
           return (
             <div key={step.label} className="flex items-center gap-3">
-              <span className="w-20 shrink-0 text-xs text-slate-400">
+              <span className="w-20 shrink-0 text-xs text-gray-500">
                 {step.label}
               </span>
-              <div className="relative h-7 flex-1 rounded-full bg-slate-800">
+              <div className="relative h-7 flex-1 rounded-full bg-white">
                 <div
                   className={`h-7 rounded-full ${step.color} transition-[width] duration-500`}
                   style={{ width: `${pctOfMax}%` }}
                 />
-                <span className="absolute inset-0 flex items-center px-3 text-xs font-medium text-white">
+                <span className="absolute inset-0 flex items-center px-3 text-xs font-medium text-gray-900">
                   {step.value.toLocaleString()}
-                  <span className="ml-2 text-slate-300/80">
+                  <span className="ml-2 text-gray-700">
                     ({pctOfSent}%)
                   </span>
                 </span>
@@ -254,7 +254,7 @@ export default function BroadcastDetailPage() {
   if (error || !broadcast) {
     return (
       <div className="flex h-64 flex-col items-center justify-center gap-2">
-        <p className="text-sm text-red-400">{error ?? 'Broadcast not found'}</p>
+        <p className="text-sm text-red-600">{error ?? 'Broadcast not found'}</p>
         <Button variant="outline" onClick={() => router.push('/broadcasts')}>
           Back to Broadcasts
         </Button>
@@ -280,20 +280,20 @@ export default function BroadcastDetailPage() {
             variant="outline"
             size="icon"
             onClick={() => router.push('/broadcasts')}
-            className="border-slate-700"
+            className="border-gray-200"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-white">{broadcast.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{broadcast.name}</h1>
               <span
                 className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${status.classes}`}
               >
                 {status.label}
               </span>
             </div>
-            <div className="mt-1 flex items-center gap-3 text-sm text-slate-400">
+            <div className="mt-1 flex items-center gap-3 text-sm text-gray-500">
               <span>Template: {broadcast.template_name}</span>
               <span>-</span>
               <span>
@@ -309,13 +309,13 @@ export default function BroadcastDetailPage() {
             funnel inconsistent. */}
         {confirmDelete ? (
           <div className="flex items-center gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-sm">
-            <span className="text-red-300">Delete this broadcast?</span>
+            <span className="text-red-700">Delete this broadcast?</span>
             <Button
               variant="outline"
               size="sm"
               onClick={() => setConfirmDelete(false)}
               disabled={deleting}
-              className="h-7 border-slate-700 bg-transparent text-slate-300 hover:bg-slate-800"
+              className="h-7 border-gray-200 bg-transparent text-gray-700 hover:bg-gray-50"
             >
               Cancel
             </Button>
@@ -339,7 +339,7 @@ export default function BroadcastDetailPage() {
                 ? 'Cannot delete while a broadcast is actively sending'
                 : 'Delete this broadcast'
             }
-            className="border-red-500/30 bg-transparent text-red-400 hover:bg-red-500/10 disabled:opacity-40"
+            className="border-red-500/30 bg-transparent text-red-600 hover:bg-red-500/10 disabled:opacity-40"
           >
             <Trash2 className="h-3.5 w-3.5" />
             Delete
@@ -354,7 +354,7 @@ export default function BroadcastDetailPage() {
           value={broadcast.total_recipients}
           total={broadcast.total_recipients}
           icon={<Users className="h-4 w-4" />}
-          color="bg-slate-800 text-slate-300"
+          color="bg-white text-gray-700"
         />
         <StatCard
           label="Sent"
@@ -368,37 +368,37 @@ export default function BroadcastDetailPage() {
           value={broadcast.delivered_count}
           total={broadcast.total_recipients}
           icon={<CheckCheck className="h-4 w-4" />}
-          color="bg-teal-500/10 text-teal-400"
+          color="bg-teal-500/10 text-teal-600"
         />
         <StatCard
           label="Read"
           value={broadcast.read_count}
           total={broadcast.total_recipients}
           icon={<Eye className="h-4 w-4" />}
-          color="bg-blue-500/10 text-blue-400"
+          color="bg-blue-500/10 text-blue-600"
         />
         <StatCard
           label="Replied"
           value={broadcast.replied_count}
           total={broadcast.total_recipients}
           icon={<MessageCircle className="h-4 w-4" />}
-          color="bg-indigo-500/10 text-indigo-400"
+          color="bg-indigo-500/10 text-indigo-600"
         />
         <StatCard
           label="Failed"
           value={broadcast.failed_count}
           total={broadcast.total_recipients}
           icon={<AlertCircle className="h-4 w-4" />}
-          color="bg-red-500/10 text-red-400"
+          color="bg-red-500/10 text-red-600"
         />
       </div>
 
       <FunnelChart steps={funnelSteps} />
 
       {/* Recipients Table */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 px-4 py-3">
-          <h2 className="text-sm font-medium text-white">
+      <div className="rounded-xl border border-gray-200 bg-gray-50">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 px-4 py-3">
+          <h2 className="text-sm font-medium text-gray-900">
             Recipients ({filteredRecipients.length}
             {statusFilter !== 'all' ? ` of ${recipients.length}` : ''})
           </h2>
@@ -409,7 +409,7 @@ export default function BroadcastDetailPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="border-slate-700 text-slate-300 hover:bg-slate-800"
+                    className="border-gray-200 text-gray-700 hover:bg-gray-50"
                   />
                 }
               >
@@ -419,11 +419,11 @@ export default function BroadcastDetailPage() {
                   : getRecipientStatus(statusFilter).label}
                 <ChevronDown className="h-3 w-3" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="border-slate-700 bg-slate-900">
+              <DropdownMenuContent className="border-gray-200 bg-gray-50">
                 <DropdownMenuItem
                   onClick={() => setStatusFilter('all')}
                   className={
-                    statusFilter === 'all' ? 'text-primary' : 'text-slate-300'
+                    statusFilter === 'all' ? 'text-primary' : 'text-gray-700'
                   }
                 >
                   All statuses
@@ -435,7 +435,7 @@ export default function BroadcastDetailPage() {
                     className={
                       statusFilter === s
                         ? 'text-primary'
-                        : 'text-slate-300'
+                        : 'text-gray-700'
                     }
                   >
                     {getRecipientStatus(s).label}
@@ -449,7 +449,7 @@ export default function BroadcastDetailPage() {
               size="sm"
               onClick={handleExport}
               disabled={recipients.length === 0}
-              className="border-slate-700 text-slate-300 hover:bg-slate-800"
+              className="border-gray-200 text-gray-700 hover:bg-gray-50"
             >
               <Download className="h-3.5 w-3.5" />
               Export CSV
@@ -459,7 +459,7 @@ export default function BroadcastDetailPage() {
 
         {filteredRecipients.length === 0 ? (
           <div className="flex h-32 items-center justify-center">
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-gray-500">
               {recipients.length === 0
                 ? 'No recipients found.'
                 : 'No recipients match this filter.'}
@@ -469,25 +469,25 @@ export default function BroadcastDetailPage() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-slate-800 hover:bg-transparent">
-                  <TableHead className="text-slate-400">Contact</TableHead>
-                  <TableHead className="text-slate-400">Phone</TableHead>
-                  <TableHead className="text-slate-400">Status</TableHead>
-                  <TableHead className="text-slate-400">Sent</TableHead>
-                  <TableHead className="text-slate-400">Delivered</TableHead>
-                  <TableHead className="text-slate-400">Read</TableHead>
-                  <TableHead className="text-slate-400">Error</TableHead>
+                <TableRow className="border-gray-200 hover:bg-transparent">
+                  <TableHead className="text-gray-500">Contact</TableHead>
+                  <TableHead className="text-gray-500">Phone</TableHead>
+                  <TableHead className="text-gray-500">Status</TableHead>
+                  <TableHead className="text-gray-500">Sent</TableHead>
+                  <TableHead className="text-gray-500">Delivered</TableHead>
+                  <TableHead className="text-gray-500">Read</TableHead>
+                  <TableHead className="text-gray-500">Error</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredRecipients.map((recipient) => {
                   const rStatus = getRecipientStatus(recipient.status);
                   return (
-                    <TableRow key={recipient.id} className="border-slate-800">
-                      <TableCell className="font-medium text-white">
+                    <TableRow key={recipient.id} className="border-gray-200">
+                      <TableCell className="font-medium text-gray-900">
                         {recipient.contact?.name ?? 'Unknown'}
                       </TableCell>
-                      <TableCell className="text-slate-300">
+                      <TableCell className="text-gray-700">
                         {recipient.contact?.phone ?? '-'}
                       </TableCell>
                       <TableCell>
@@ -497,22 +497,22 @@ export default function BroadcastDetailPage() {
                           {rStatus.label}
                         </span>
                       </TableCell>
-                      <TableCell className="text-slate-400">
+                      <TableCell className="text-gray-500">
                         {recipient.sent_at
                           ? new Date(recipient.sent_at).toLocaleString()
                           : '-'}
                       </TableCell>
-                      <TableCell className="text-slate-400">
+                      <TableCell className="text-gray-500">
                         {recipient.delivered_at
                           ? new Date(recipient.delivered_at).toLocaleString()
                           : '-'}
                       </TableCell>
-                      <TableCell className="text-slate-400">
+                      <TableCell className="text-gray-500">
                         {recipient.read_at
                           ? new Date(recipient.read_at).toLocaleString()
                           : '-'}
                       </TableCell>
-                      <TableCell className="max-w-xs truncate text-xs text-red-400">
+                      <TableCell className="max-w-xs truncate text-xs text-red-600">
                         {recipient.error_message ?? '-'}
                       </TableCell>
                     </TableRow>

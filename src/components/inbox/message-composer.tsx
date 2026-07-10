@@ -84,7 +84,7 @@ export function MessageComposer({
   );
 
   return (
-    <div className="border-t border-slate-800 bg-slate-900 p-3">
+    <div className="border-t border-gray-200 bg-gray-50 p-3">
       {replyTo && (
         <div className="mb-2">
           <ReplyQuote
@@ -96,13 +96,13 @@ export function MessageComposer({
       )}
       {sessionExpired && (
         <div className="mb-2 flex items-center justify-between rounded-lg bg-amber-500/10 px-3 py-2">
-          <p className="text-xs text-amber-400">
+          <p className="text-xs text-amber-600">
             24-hour session expired. Use a template to re-engage.
           </p>
           <Button
             variant="ghost"
             size="sm"
-            className="h-7 text-xs text-amber-400 hover:text-amber-300"
+            className="h-7 text-xs text-amber-600 hover:text-amber-700"
             onClick={onOpenTemplates}
           >
             <LayoutTemplate className="mr-1 h-3 w-3" />
@@ -118,7 +118,7 @@ export function MessageComposer({
           canAct={!readOnly}
           gateReason="send messages"
           title={readOnly ? undefined : "Send template"}
-          className="h-9 w-9 shrink-0 p-0 text-slate-400 hover:text-white"
+          className="h-9 w-9 shrink-0 p-0 text-gray-500 hover:text-gray-900"
           onClick={onOpenTemplates}
         >
           <LayoutTemplate className="h-4 w-4" />
@@ -143,7 +143,7 @@ export function MessageComposer({
           // The placeholder text also surfaces the read-only state.
           title={readOnly ? "Read-only — your role can't send messages" : undefined}
           className={cn(
-            "flex-1 resize-none rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition-colors focus:border-primary/50",
+            "flex-1 resize-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none transition-colors focus:border-primary/50",
             (sessionExpired || readOnly) && "cursor-not-allowed opacity-50"
           )}
         />
@@ -163,7 +163,7 @@ export function MessageComposer({
       {/* Hint sits outside the flex row so its height doesn't push
           `items-end` buttons below the textarea. Indented to line up
           under the textarea left edge (w-9 button + gap-2 = 44px). */}
-      <p className="mt-1 pl-11 text-[10px] text-slate-600">
+      <p className="mt-1 pl-11 text-[10px] text-gray-400">
         Type &apos;/&apos; for quick replies
       </p>
     </div>

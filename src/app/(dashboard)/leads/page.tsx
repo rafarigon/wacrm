@@ -28,7 +28,7 @@ const PERIODOS = [
 ] as const;
 
 const selectPill =
-  "h-9 rounded-full border border-slate-700 bg-slate-900 px-4 pr-8 text-xs font-medium text-slate-200 outline-none transition-colors hover:border-slate-600 focus:border-primary";
+  "h-9 rounded-full border border-gray-200 bg-gray-50 px-4 pr-8 text-xs font-medium text-gray-800 outline-none transition-colors hover:border-gray-400 focus:border-primary";
 
 export default function LeadsPage() {
   const supabase = createClient();
@@ -132,8 +132,8 @@ export default function LeadsPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-white">Leads</h1>
-          <p className="text-sm text-slate-400">
+          <h1 className="text-xl font-bold text-gray-900">Leads</h1>
+          <p className="text-sm text-gray-500">
             {filtrados.length} lead{filtrados.length === 1 ? "" : "s"} capturado
             {filtrados.length === 1 ? "" : "s"}
           </p>
@@ -174,15 +174,15 @@ export default function LeadsPage() {
       </div>
 
       {/* Alternador de visão: Funil | Agenda | Lista */}
-      <div className="mb-5 inline-flex rounded-lg border border-slate-800 bg-slate-900/60 p-1">
+      <div className="mb-5 inline-flex rounded-lg border border-gray-200 bg-gray-50/80 p-1">
         {VISOES.map(({ id, label, Icon }) => (
           <button
             key={id}
             onClick={() => setVisao(id)}
             className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
               visao === id
-                ? "bg-slate-800 text-white"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-white text-gray-900"
+                : "text-gray-500 hover:text-gray-800"
             }`}
           >
             <Icon className="h-3.5 w-3.5" />
@@ -192,7 +192,7 @@ export default function LeadsPage() {
       </div>
 
       {carregando ? (
-        <div className="py-20 text-center text-sm text-slate-400">
+        <div className="py-20 text-center text-sm text-gray-500">
           Carregando leads...
         </div>
       ) : (

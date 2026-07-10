@@ -247,32 +247,32 @@ export function DealForm({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="bg-slate-900 border-slate-700 text-slate-200 sm:max-w-lg w-full p-0"
+        className="bg-gray-50 border-gray-200 text-gray-800 sm:max-w-lg w-full p-0"
       >
         <div className="flex h-full flex-col">
-          <SheetHeader className="border-b border-slate-700/50 p-4">
-            <SheetTitle className="text-white">
+          <SheetHeader className="border-b border-gray-200 p-4">
+            <SheetTitle className="text-gray-900">
               {deal ? "Edit Deal" : "New Deal"}
             </SheetTitle>
           </SheetHeader>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             <div className="grid gap-2">
-              <Label className="text-slate-300">Title</Label>
+              <Label className="text-gray-700">Title</Label>
               <Input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Deal title"
-                className="border-slate-700 bg-slate-800 text-white"
+                className="border-gray-200 bg-white text-gray-900"
               />
             </div>
 
             <div className="grid gap-2">
-              <Label className="text-slate-300">Contact</Label>
+              <Label className="text-gray-700">Contact</Label>
               <select
                 value={contactId}
                 onChange={(e) => setContactId(e.target.value)}
-                className="h-9 w-full rounded-lg border border-slate-700 bg-slate-800 px-2.5 text-sm text-white outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                className="h-9 w-full rounded-lg border border-gray-200 bg-white px-2.5 text-sm text-gray-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
               >
                 <option value="">Select a contact</option>
                 {contacts.map((c) => (
@@ -295,24 +295,24 @@ export function DealForm({
 
             <div className="grid grid-cols-[1fr_110px] gap-3">
               <div className="grid gap-2">
-                <Label className="text-slate-300">Value</Label>
+                <Label className="text-gray-700">Value</Label>
                 <div className="relative">
-                  <DollarSign className="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-500" />
+                  <DollarSign className="absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
                   <Input
                     type="number"
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                     placeholder="0"
-                    className="border-slate-700 bg-slate-800 pl-7 text-white"
+                    className="border-gray-200 bg-white pl-7 text-gray-900"
                   />
                 </div>
               </div>
               <div className="grid gap-2">
-                <Label className="text-slate-300">Currency</Label>
+                <Label className="text-gray-700">Currency</Label>
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
-                  className="h-9 w-full rounded-lg border border-slate-700 bg-slate-800 px-2.5 text-sm text-white outline-none focus:border-primary"
+                  className="h-9 w-full rounded-lg border border-gray-200 bg-white px-2.5 text-sm text-gray-900 outline-none focus:border-primary"
                 >
                   {CURRENCIES.map((c) => (
                     <option key={c.code} value={c.code}>
@@ -324,21 +324,21 @@ export function DealForm({
             </div>
 
             <div className="grid gap-2">
-              <Label className="text-slate-300">Expected Close Date</Label>
+              <Label className="text-gray-700">Expected Close Date</Label>
               <Input
                 type="date"
                 value={expectedCloseDate}
                 onChange={(e) => setExpectedCloseDate(e.target.value)}
-                className="border-slate-700 bg-slate-800 text-white"
+                className="border-gray-200 bg-white text-gray-900"
               />
             </div>
 
             <div className="grid gap-2">
-              <Label className="text-slate-300">Stage</Label>
+              <Label className="text-gray-700">Stage</Label>
               <select
                 value={stageId}
                 onChange={(e) => setStageId(e.target.value)}
-                className="h-9 w-full rounded-lg border border-slate-700 bg-slate-800 px-2.5 text-sm text-white outline-none focus:border-primary"
+                className="h-9 w-full rounded-lg border border-gray-200 bg-white px-2.5 text-sm text-gray-900 outline-none focus:border-primary"
               >
                 {stages.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -349,11 +349,11 @@ export function DealForm({
             </div>
 
             <div className="grid gap-2">
-              <Label className="text-slate-300">Assigned To</Label>
+              <Label className="text-gray-700">Assigned To</Label>
               <select
                 value={assignedTo}
                 onChange={(e) => setAssignedTo(e.target.value)}
-                className="h-9 w-full rounded-lg border border-slate-700 bg-slate-800 px-2.5 text-sm text-white outline-none focus:border-primary"
+                className="h-9 w-full rounded-lg border border-gray-200 bg-white px-2.5 text-sm text-gray-900 outline-none focus:border-primary"
               >
                 <option value="">Unassigned</option>
                 {profiles.map((p) => (
@@ -365,18 +365,18 @@ export function DealForm({
             </div>
 
             <div className="grid gap-2">
-              <Label className="text-slate-300">Notes</Label>
+              <Label className="text-gray-700">Notes</Label>
               <Textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add notes..."
-                className="min-h-[100px] border-slate-700 bg-slate-800 text-white"
+                className="min-h-[100px] border-gray-200 bg-white text-gray-900"
               />
             </div>
 
             {deal && (
-              <div className="space-y-2 rounded-lg border border-slate-700 bg-slate-900/50 p-3">
-                <p className="text-xs font-medium uppercase tracking-wider text-slate-400">
+              <div className="space-y-2 rounded-lg border border-gray-200 bg-gray-50 p-3">
+                <p className="text-xs font-medium uppercase tracking-wider text-gray-500">
                   Status
                 </p>
                 <div className="flex gap-2">
@@ -417,7 +417,7 @@ export function DealForm({
                     variant="ghost"
                     onClick={() => handleStatusChange("open")}
                     disabled={!!statusAction}
-                    className="w-full text-slate-400 hover:text-white"
+                    className="w-full text-gray-500 hover:text-gray-900"
                   >
                     Reopen deal
                   </Button>
@@ -426,12 +426,12 @@ export function DealForm({
             )}
           </div>
 
-          <div className="border-t border-slate-700/50 bg-slate-900/80 p-4">
+          <div className="border-t border-gray-200 bg-white/90 p-4">
             <div className="flex gap-2">
               <Button
                 variant="outline"
                 onClick={() => onOpenChange(false)}
-                className="flex-1 border-slate-700 bg-transparent text-slate-300 hover:bg-slate-800"
+                className="flex-1 border-gray-200 bg-transparent text-gray-700 hover:bg-gray-50"
               >
                 Cancel
               </Button>
@@ -447,13 +447,13 @@ export function DealForm({
             {deal &&
               (confirmDelete ? (
                 <div className="mt-3 flex items-center justify-between gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs">
-                  <span className="text-red-300">Delete this deal?</span>
+                  <span className="text-red-700">Delete this deal?</span>
                   <div className="flex gap-1">
                     <button
                       type="button"
                       onClick={() => setConfirmDelete(false)}
                       disabled={deleting}
-                      className="rounded px-2 py-1 text-slate-300 hover:bg-slate-800"
+                      className="rounded px-2 py-1 text-gray-700 hover:bg-gray-50"
                     >
                       Cancel
                     </button>
@@ -471,7 +471,7 @@ export function DealForm({
                 <button
                   type="button"
                   onClick={() => setConfirmDelete(true)}
-                  className="mt-3 flex w-full items-center justify-center gap-1 text-xs text-red-400 hover:text-red-300"
+                  className="mt-3 flex w-full items-center justify-center gap-1 text-xs text-red-600 hover:text-red-700"
                 >
                   <Trash2 className="h-3 w-3" />
                   Delete Deal

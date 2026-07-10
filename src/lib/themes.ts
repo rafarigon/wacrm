@@ -14,6 +14,7 @@
  */
 
 export const THEME_IDS = [
+  "navy",
   "violet",
   "emerald",
   "cobalt",
@@ -23,7 +24,7 @@ export const THEME_IDS = [
 
 export type ThemeId = (typeof THEME_IDS)[number];
 
-export const DEFAULT_THEME: ThemeId = "violet";
+export const DEFAULT_THEME: ThemeId = "navy";
 
 export const STORAGE_KEY = "wacrm.theme";
 
@@ -41,6 +42,12 @@ export interface ThemeMeta {
 }
 
 export const THEMES: ReadonlyArray<ThemeMeta> = [
+  {
+    id: "navy",
+    name: "Navy",
+    tagline: "O azul da RR — padrão, alinhado ao quitto-app.",
+    swatch: "oklch(0.34 0.07 253)",
+  },
   {
     id: "violet",
     name: "Violet",

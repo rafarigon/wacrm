@@ -37,20 +37,20 @@ export const TEMPERATURAS: Record<
   quente: {
     label: "Quente",
     score: 100,
-    pill: "bg-amber-500/15 text-amber-400",
+    pill: "bg-amber-500/15 text-amber-600",
     border: "border-amber-500/40",
   },
   morno: {
     label: "Morno",
     score: 70,
-    pill: "bg-yellow-500/15 text-yellow-300",
+    pill: "bg-yellow-500/15 text-yellow-700",
     border: "border-yellow-500/30",
   },
   frio: {
     label: "Frio",
     score: 40,
-    pill: "bg-sky-500/15 text-sky-400",
-    border: "border-slate-700/50",
+    pill: "bg-sky-500/15 text-sky-600",
+    border: "border-gray-200",
   },
 };
 

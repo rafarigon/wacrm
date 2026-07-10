@@ -93,9 +93,9 @@ export function PipelineAnalytics({ stages, deals }: PipelineAnalyticsProps) {
 
   return (
     <TooltipProvider>
-      <div className="grid grid-cols-2 gap-3 rounded-xl border border-slate-800 bg-slate-900/60 p-4 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 rounded-xl border border-gray-200 bg-gray-50/80 p-4 sm:grid-cols-3 xl:grid-cols-6">
         <Metric
-          icon={<BarChart3 className="h-4 w-4 text-slate-400" />}
+          icon={<BarChart3 className="h-4 w-4 text-gray-500" />}
           label="Total Deals"
           value={String(stats.totalCount)}
           tooltip="Count of every deal in this pipeline that isn't marked as Lost. Won deals are still included."
@@ -107,13 +107,13 @@ export function PipelineAnalytics({ stages, deals }: PipelineAnalyticsProps) {
           tooltip="Sum of the dollar values of all deals in this pipeline, excluding deals marked as Lost."
         />
         <Metric
-          icon={<Target className="h-4 w-4 text-blue-400" />}
+          icon={<Target className="h-4 w-4 text-blue-600" />}
           label="Avg Deal Size"
           value={formatCurrency(stats.avgValue, defaultCurrency)}
           tooltip="Pipeline Value divided by Total Deals — the average value of a single non-lost deal."
         />
         <Metric
-          icon={<TrendingUp className="h-4 w-4 text-purple-400" />}
+          icon={<TrendingUp className="h-4 w-4 text-purple-600" />}
           label="Weighted Value"
           value={formatCurrency(stats.weightedValue, defaultCurrency)}
           tooltip="Expected revenue: each open deal's value × its stage probability. First stage ≈ 10%, stages progress up to 90%, Won = 100%. Lost deals are excluded."
@@ -125,7 +125,7 @@ export function PipelineAnalytics({ stages, deals }: PipelineAnalyticsProps) {
           tooltip="Deals marked as Won since the first day of the current month."
         />
         <Metric
-          icon={<XCircle className="h-4 w-4 text-red-400" />}
+          icon={<XCircle className="h-4 w-4 text-red-600" />}
           label="Lost This Month"
           value={String(stats.lostThisMonth)}
           tooltip="Deals marked as Lost since the first day of the current month."
@@ -147,8 +147,8 @@ function Metric({
   tooltip: string;
 }) {
   return (
-    <div className="rounded-lg bg-slate-800/50 p-3">
-      <div className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-slate-400">
+    <div className="rounded-lg bg-gray-50 p-3">
+      <div className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-gray-500">
         {icon}
         <span>{label}</span>
         <Tooltip>
@@ -157,7 +157,7 @@ function Metric({
               <button
                 type="button"
                 aria-label={`How ${label} is calculated`}
-                className="ml-auto text-slate-500 hover:text-slate-300 focus:outline-none"
+                className="ml-auto text-gray-400 hover:text-gray-700 focus:outline-none"
               />
             }
           >
@@ -168,7 +168,7 @@ function Metric({
           </TooltipContent>
         </Tooltip>
       </div>
-      <p className="mt-1 text-base font-semibold text-white">{value}</p>
+      <p className="mt-1 text-base font-semibold text-gray-900">{value}</p>
     </div>
   );
 }

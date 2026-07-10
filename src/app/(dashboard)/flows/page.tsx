@@ -61,9 +61,9 @@ const STATUS_LABELS: Record<FlowRow["status"], string> = {
 };
 
 const STATUS_COLORS: Record<FlowRow["status"], string> = {
-  draft: "border-slate-700 bg-slate-800 text-slate-300",
-  active: "border-emerald-600/40 bg-emerald-500/10 text-emerald-300",
-  archived: "border-slate-700 bg-slate-800/50 text-slate-500",
+  draft: "border-gray-200 bg-white text-gray-700",
+  active: "border-emerald-600/40 bg-emerald-500/10 text-emerald-700",
+  archived: "border-gray-200 bg-gray-50 text-gray-400",
 };
 
 interface TemplateSummary {
@@ -194,7 +194,7 @@ export default function FlowsPage() {
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-slate-500" />
+        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -204,12 +204,12 @@ export default function FlowsPage() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold text-white">Flows</h1>
-            <span className="inline-flex items-center rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-300">
+            <h1 className="text-2xl font-semibold text-gray-900">Flows</h1>
+            <span className="inline-flex items-center rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">
               Beta
             </span>
           </div>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-gray-500">
             Build branching, button-driven WhatsApp conversations. Useful for
             menus, FAQs, and triage before a human steps in.
           </p>
@@ -247,17 +247,17 @@ export default function FlowsPage() {
             `sm:max-w-sm` baked into its default classes. Without the
             sm: prefix our override applies at base only and the
             sm-scoped 384px wins at every real desktop breakpoint. */}
-        <DialogContent className="sm:max-w-4xl bg-slate-900 text-slate-100">
+        <DialogContent className="sm:max-w-4xl bg-gray-50 text-gray-900">
           <DialogHeader>
             <DialogTitle>Create a new flow</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogDescription className="text-gray-500">
               Start from a template or build from scratch.
             </DialogDescription>
           </DialogHeader>
 
           {templates.length > 0 && (
             <div className="space-y-3">
-              <p className="text-xs uppercase tracking-wide text-slate-500">
+              <p className="text-xs uppercase tracking-wide text-gray-400">
                 Start from a template
               </p>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -269,16 +269,16 @@ export default function FlowsPage() {
                       type="button"
                       onClick={() => handleUseTemplate(t.slug)}
                       disabled={creating}
-                      className="flex flex-col gap-2.5 rounded-lg border border-slate-800 bg-slate-950 p-4 text-left transition-colors hover:border-primary/40 hover:bg-slate-800 disabled:opacity-50"
+                      className="flex flex-col gap-2.5 rounded-lg border border-gray-200 bg-gray-100 p-4 text-left transition-colors hover:border-primary/40 hover:bg-gray-50 disabled:opacity-50"
                     >
                       <Icon className="h-5 w-5 text-primary" />
-                      <span className="text-sm font-semibold text-white">
+                      <span className="text-sm font-semibold text-gray-900">
                         {t.name}
                       </span>
-                      <span className="text-xs leading-relaxed text-slate-400">
+                      <span className="text-xs leading-relaxed text-gray-500">
                         {t.description}
                       </span>
-                      <span className="mt-auto border-t border-slate-800 pt-2 text-[11px] text-slate-500">
+                      <span className="mt-auto border-t border-gray-200 pt-2 text-[11px] text-gray-400">
                         {t.node_count} {t.node_count === 1 ? "node" : "nodes"}
                       </span>
                     </button>
@@ -288,15 +288,15 @@ export default function FlowsPage() {
             </div>
           )}
 
-          <div className="space-y-2 border-t border-slate-800 pt-4">
-            <p className="text-xs uppercase tracking-wide text-slate-500">
+          <div className="space-y-2 border-t border-gray-200 pt-4">
+            <p className="text-xs uppercase tracking-wide text-gray-400">
               Or start blank
             </p>
             <Input
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="e.g. Welcome menu"
-              className="bg-slate-800"
+              className="bg-white"
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleCreate();
               }}
@@ -330,14 +330,14 @@ function EmptyState({
   canCreate: boolean;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-700 bg-slate-900/50 px-6 py-16 text-center">
-      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-800">
-        <Workflow className="h-6 w-6 text-slate-500" />
+    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-200 bg-gray-50 px-6 py-16 text-center">
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white">
+        <Workflow className="h-6 w-6 text-gray-400" />
       </div>
-      <h2 className="mt-4 text-base font-medium text-white">
+      <h2 className="mt-4 text-base font-medium text-gray-900">
         No flows yet
       </h2>
-      <p className="mt-1 max-w-md text-sm text-slate-400">
+      <p className="mt-1 max-w-md text-sm text-gray-500">
         Build your first conversation — a welcome menu, an order lookup, an FAQ
         bot. Customers tap buttons; the bot routes them to the right answer (or
         the right agent).
@@ -372,11 +372,11 @@ function FlowCard({
         ? Archive
         : PauseCircle;
   return (
-    <div className="flex flex-col rounded-lg border border-slate-800 bg-slate-900 p-4 transition-colors hover:border-slate-700">
+    <div className="flex flex-col rounded-lg border border-gray-200 bg-gray-50 p-4 transition-colors hover:border-gray-300">
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
           <Workflow className="h-4 w-4 shrink-0 text-primary" />
-          <h3 className="truncate text-sm font-semibold text-white">
+          <h3 className="truncate text-sm font-semibold text-gray-900">
             {flow.name}
           </h3>
         </div>
@@ -392,18 +392,18 @@ function FlowCard({
         </Badge>
       </div>
 
-      <p className="mt-2 line-clamp-2 text-xs text-slate-400">
+      <p className="mt-2 line-clamp-2 text-xs text-gray-500">
         {flow.description || triggerSummary}
       </p>
 
-      <div className="mt-4 flex items-center gap-3 text-[11px] text-slate-500">
+      <div className="mt-4 flex items-center gap-3 text-[11px] text-gray-400">
         <span className="inline-flex items-center gap-1">
           <MessageSquare className="h-3 w-3" />
           {flow.execution_count} {flow.execution_count === 1 ? "run" : "runs"}
         </span>
       </div>
 
-      <div className="mt-4 flex items-center justify-end gap-2 border-t border-slate-800 pt-3">
+      <div className="mt-4 flex items-center justify-end gap-2 border-t border-gray-200 pt-3">
         <Button variant="ghost" size="sm" onClick={onEdit}>
           <Pencil className="h-3.5 w-3.5" />
           Edit
@@ -412,7 +412,7 @@ function FlowCard({
           variant="ghost"
           size="sm"
           onClick={onDelete}
-          className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+          className="text-red-600 hover:bg-red-500/10 hover:text-red-700"
         >
           <Trash2 className="h-3.5 w-3.5" />
           Delete

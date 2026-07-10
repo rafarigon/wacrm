@@ -39,7 +39,7 @@ const ROLE_CHIP: Record<
     label: "Owner",
     // Amber: scarce, immutable, "the boss" — gets visual emphasis.
     className:
-      "border-amber-500/40 bg-amber-500/10 text-amber-300",
+      "border-amber-500/40 bg-amber-500/10 text-amber-700",
   },
   admin: {
     icon: Shield,
@@ -53,14 +53,14 @@ const ROLE_CHIP: Record<
     label: "Agent",
     // Neutral slate: the operational default.
     className:
-      "border-slate-700 bg-slate-800 text-slate-300",
+      "border-gray-200 bg-white text-gray-700",
   },
   viewer: {
     icon: User,
     label: "Viewer",
     // Muted slate: read-only role; visually quieter than agent.
     className:
-      "border-slate-800 bg-slate-900 text-slate-500",
+      "border-gray-200 bg-gray-50 text-gray-400",
   },
 };
 import {
@@ -159,7 +159,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         aria-label="Close menu"
         onClick={onClose}
         className={cn(
-          "fixed inset-0 z-30 bg-slate-950/70 backdrop-blur-sm transition-opacity lg:hidden",
+          "fixed inset-0 z-30 bg-gray-900/40 backdrop-blur-sm transition-opacity lg:hidden",
           open
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0",
@@ -169,7 +169,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
       <aside
         className={cn(
           // Mobile: fixed drawer that slides in from the left.
-          "fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col border-r border-slate-800 bg-slate-900",
+          "fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-col border-r border-gray-200 bg-gray-50",
           "transition-transform duration-200 ease-out will-change-transform",
           open ? "translate-x-0" : "-translate-x-full",
           // Desktop: static, always visible — reset all the mobile framing.
@@ -179,12 +179,12 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
       >
         {/* Logo row. On mobile we put a close button here; on desktop the
             close button is hidden since the sidebar is always-visible. */}
-        <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-slate-800 px-4">
+        <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-gray-200 px-4">
           <Link href="/dashboard" className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <MessageSquare className="h-4 w-4" />
             </div>
-            <span className="text-sm font-semibold text-white">
+            <span className="text-sm font-semibold text-gray-900">
               CRM Template for WhatsApp
             </span>
           </Link>
@@ -192,7 +192,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
             type="button"
             onClick={onClose}
             aria-label="Close menu"
-            className="flex h-9 w-9 items-center justify-center rounded-md text-slate-400 hover:bg-slate-800 hover:text-white lg:hidden"
+            className="flex h-9 w-9 items-center justify-center rounded-md text-gray-500 hover:bg-gray-50 hover:text-gray-900 lg:hidden"
           >
             <X className="h-5 w-5" />
           </button>
@@ -218,7 +218,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                       "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors lg:py-2",
                       isActive
                         ? "bg-primary/10 text-primary"
-                        : "text-slate-400 hover:bg-slate-800 hover:text-white",
+                        : "text-gray-500 hover:bg-gray-50 hover:text-gray-900",
                     )}
                   >
                     <item.icon className="h-4 w-4" />
@@ -226,7 +226,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                     {item.beta && (
                       <span
                         aria-label="Beta feature"
-                        className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-amber-300"
+                        className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-amber-700"
                       >
                         Beta
                       </span>
@@ -246,7 +246,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
             })}
           </ul>
 
-          <div className="my-4 border-t border-slate-800" />
+          <div className="my-4 border-t border-gray-200" />
 
           <ul className="flex flex-col gap-1">
             {bottomNavItems.map((item) => {
@@ -259,7 +259,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                       "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors lg:py-2",
                       isActive
                         ? "bg-primary/10 text-primary"
-                        : "text-slate-400 hover:bg-slate-800 hover:text-white",
+                        : "text-gray-500 hover:bg-gray-50 hover:text-gray-900",
                     )}
                   >
                     <item.icon className="h-4 w-4" />
@@ -272,7 +272,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         </nav>
 
         {/* User section */}
-        <div className="shrink-0 border-t border-slate-800 p-3">
+        <div className="shrink-0 border-t border-gray-200 p-3">
           {/* Account name display — surfaced only when the account
               name differs from the user's own name (see
               `showAccountStrip`). For a default solo account the two
@@ -280,7 +280,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               below; for renamed or shared accounts it tells the user
               which account they're acting in. */}
           {showAccountStrip && account?.name ? (
-            <div className="mb-2 flex items-center gap-2 px-3 text-xs text-slate-500">
+            <div className="mb-2 flex items-center gap-2 px-3 text-xs text-gray-400">
               <UsersRound className="size-3.5 shrink-0" />
               {/* `title=` exposes the full name on hover when it
                   gets truncated (long account names + narrow
@@ -309,7 +309,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
             </div>
           ) : null}
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-slate-800/60 focus:bg-slate-800/60 focus:outline-none data-popup-open:bg-slate-800/60">
+            <DropdownMenuTrigger className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-gray-50 focus:bg-gray-50 focus:outline-none data-popup-open:bg-gray-100">
               <Avatar className="size-8 shrink-0">
                 {profile?.avatar_url ? (
                   <AvatarImage
@@ -324,10 +324,10 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-white">
+                <p className="truncate text-sm font-medium text-gray-900">
                   {profile?.full_name ?? "User"}
                 </p>
-                <p className="truncate text-xs text-slate-400">
+                <p className="truncate text-xs text-gray-500">
                   {profile?.email ?? ""}
                 </p>
               </div>
@@ -336,14 +336,14 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               align="end"
               side="top"
               sideOffset={6}
-              className="min-w-56 bg-slate-900 text-slate-100 ring-slate-700"
+              className="min-w-56 bg-gray-50 text-gray-900 ring-gray-300"
             >
               <DropdownMenuItem
                 render={
                   <Link
                     href="/settings?tab=profile"
                     onClick={onClose}
-                    className="text-slate-200 focus:bg-slate-800 focus:text-white"
+                    className="text-gray-800 focus:bg-gray-50 focus:text-gray-900"
                   />
                 }
               >
@@ -355,17 +355,17 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                   <Link
                     href="/settings?tab=whatsapp"
                     onClick={onClose}
-                    className="text-slate-200 focus:bg-slate-800 focus:text-white"
+                    className="text-gray-800 focus:bg-gray-50 focus:text-gray-900"
                   />
                 }
               >
                 <Settings className="size-4" />
                 Settings
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-slate-800" />
+              <DropdownMenuSeparator className="bg-white" />
               <DropdownMenuItem
                 onClick={signOut}
-                className="text-slate-200 focus:bg-slate-800 focus:text-white"
+                className="text-gray-800 focus:bg-gray-50 focus:text-gray-900"
               >
                 <LogOut className="size-4" />
                 Sign out
