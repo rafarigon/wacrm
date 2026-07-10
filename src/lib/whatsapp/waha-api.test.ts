@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   chatIdFromPhone,
   getLidPhoneNumber,
+  resolveChatId,
   sendTextMessage,
   sendMediaMessage,
   setReaction,
@@ -23,19 +24,81 @@ const okJson = (payload: unknown): Promise<Response> =>
     }),
   );
 
+// Sends now canonicalize the chatId via /api/contacts/check-exists before
+// posting — the mock answers both endpoints. The canonical id deliberately
+// differs from the heuristic one (no ninth digit) to mirror the Brazilian
+// pre-2012 mobile registrations that motivated the lookup.
+const CANONICAL_CHAT_ID = "554192884412@c.us";
+const mockWahaFetch = (
+  sendResponse: unknown,
+  checkExists: unknown = { numberExists: true, chatId: CANONICAL_CHAT_ID },
+) =>
+  vi.fn((url: RequestInfo | URL) => {
+    if (String(url).includes("/api/contacts/check-exists")) {
+      return okJson(checkExists);
+    }
+    return okJson(sendResponse);
+  });
+
+const sendCallOf = (needle: string): [string, RequestInit] => {
+  const call = vi
+    .mocked(fetch)
+    .mock.calls.find((c) => String(c[0]).includes(needle));
+  if (!call) throw new Error(`no fetch call matching ${needle}`);
+  return call as [string, RequestInit];
+};
+
 describe("chatIdFromPhone", () => {
   it("strips formatting and appends @c.us", () => {
     expect(chatIdFromPhone("+55 41 99288-4412")).toBe("5541992884412@c.us");
   });
 
-  it("keeps already-bare digits untouched", () => {
+  it("prepends 55 to national-format Brazilian numbers (DDD + 9 digits)", () => {
+    expect(chatIdFromPhone("41992884412")).toBe("5541992884412@c.us");
+  });
+
+  it("prepends 55 to national-format landlines (DDD + 8 digits)", () => {
+    expect(chatIdFromPhone("(41) 3222-1234")).toBe("554132221234@c.us");
+  });
+
+  it("keeps already-international digits untouched", () => {
     expect(chatIdFromPhone("5541992884412")).toBe("5541992884412@c.us");
+  });
+});
+
+describe("resolveChatId", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("returns the canonical chatId from check-exists (ninth-digit case)", async () => {
+    vi.stubGlobal("fetch", mockWahaFetch(null));
+    const chatId = await resolveChatId({ ...BASE_ARGS, phone: "41992884412" });
+    expect(chatId).toBe(CANONICAL_CHAT_ID);
+    const [url] = sendCallOf("/api/contacts/check-exists");
+    expect(url).toBe(
+      "http://waha.local:3001/api/contacts/check-exists?phone=5541992884412&session=default",
+    );
+  });
+
+  it("falls back to the heuristic chatId when the number is unknown", async () => {
+    vi.stubGlobal("fetch", mockWahaFetch(null, { numberExists: false }));
+    expect(await resolveChatId({ ...BASE_ARGS, phone: "41992884412" })).toBe(
+      "5541992884412@c.us",
+    );
+  });
+
+  it("falls back when the lookup errors", async () => {
+    vi.stubGlobal("fetch", vi.fn(() => Promise.reject(new Error("down"))));
+    expect(await resolveChatId({ ...BASE_ARGS, phone: "41992884412" })).toBe(
+      "5541992884412@c.us",
+    );
   });
 });
 
 describe("sendTextMessage", () => {
   beforeEach(() => {
-    vi.stubGlobal("fetch", vi.fn(() => okJson({ key: { id: "ABCDEF123" } })));
+    vi.stubGlobal("fetch", mockWahaFetch({ key: { id: "ABCDEF123" } }));
   });
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -48,37 +111,37 @@ describe("sendTextMessage", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
-  it("POSTs to /api/sendText with session, chatId and X-Api-Key", async () => {
+  it("POSTs to /api/sendText with session, canonical chatId and X-Api-Key", async () => {
     const result = await sendTextMessage({ ...BASE_ARGS, text: "Olá" });
 
     expect(result.messageId).toBe("ABCDEF123");
-    const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+    const [url, init] = sendCallOf("/api/sendText");
     expect(url).toBe("http://waha.local:3001/api/sendText");
     expect((init.headers as Record<string, string>)["X-Api-Key"]).toBe("test-key");
     const body = JSON.parse(init.body as string);
     expect(body).toEqual({
       session: "default",
-      chatId: "5541992884412@c.us",
+      chatId: CANONICAL_CHAT_ID,
       text: "Olá",
     });
   });
 
   it("adds reply_to when contextMessageId is set", async () => {
     await sendTextMessage({ ...BASE_ARGS, text: "Oi", contextMessageId: "MSG1" });
-    const [, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+    const [, init] = sendCallOf("/api/sendText");
     expect(JSON.parse(init.body as string).reply_to).toBe("MSG1");
   });
 
   it("tolerates a trailing slash on baseUrl", async () => {
     await sendTextMessage({ ...BASE_ARGS, baseUrl: "http://waha.local:3001/", text: "Oi" });
-    const [url] = vi.mocked(fetch).mock.calls[0] as [string];
+    const [url] = sendCallOf("/api/sendText");
     expect(url).toBe("http://waha.local:3001/api/sendText");
   });
 
   it("extracts WEBJS-shaped ids (id._serialized)", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(() => okJson({ id: { _serialized: "true_554199@c.us_AAA" } })),
+      mockWahaFetch({ id: { _serialized: "true_554199@c.us_AAA" } }),
     );
     const result = await sendTextMessage({ ...BASE_ARGS, text: "Oi" });
     expect(result.messageId).toBe("true_554199@c.us_AAA");
@@ -87,13 +150,16 @@ describe("sendTextMessage", () => {
   it("surfaces the WAHA error message on non-2xx", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn(() =>
-        Promise.resolve(
+      vi.fn((url: RequestInfo | URL) => {
+        if (String(url).includes("/api/contacts/check-exists")) {
+          return okJson({ numberExists: true, chatId: CANONICAL_CHAT_ID });
+        }
+        return Promise.resolve(
           new Response(JSON.stringify({ message: "Session not found" }), {
             status: 404,
           }),
-        ),
-      ),
+        );
+      }),
     );
     await expect(
       sendTextMessage({ ...BASE_ARGS, text: "Oi" }),
@@ -103,7 +169,7 @@ describe("sendTextMessage", () => {
 
 describe("sendMediaMessage", () => {
   beforeEach(() => {
-    vi.stubGlobal("fetch", vi.fn(() => okJson({ id: "MEDIA1" })));
+    vi.stubGlobal("fetch", mockWahaFetch({ id: "MEDIA1" }));
   });
   afterEach(() => {
     vi.unstubAllGlobals();
@@ -126,11 +192,11 @@ describe("sendMediaMessage", () => {
       kind,
       link: "https://cdn.example.com/x",
     });
-    const [url] = vi.mocked(fetch).mock.calls[0] as [string];
+    const [url] = sendCallOf(path);
     expect(url).toBe(`http://waha.local:3001${path}`);
   });
 
-  it("sends filename only for documents", async () => {
+  it("sends filename only for documents and uses the canonical chatId", async () => {
     await sendMediaMessage({
       ...BASE_ARGS,
       kind: "document",
@@ -138,8 +204,9 @@ describe("sendMediaMessage", () => {
       filename: "tabela.pdf",
       caption: "Tabela de preços",
     });
-    const [, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+    const [, init] = sendCallOf("/api/sendFile");
     const body = JSON.parse(init.body as string);
+    expect(body.chatId).toBe(CANONICAL_CHAT_ID);
     expect(body.file).toEqual({
       url: "https://cdn.example.com/tabela.pdf",
       filename: "tabela.pdf",
