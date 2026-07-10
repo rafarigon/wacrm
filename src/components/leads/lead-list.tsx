@@ -17,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Flame, Snowflake } from "lucide-react";
+import { useWhatsAppNav } from "./use-whatsapp-nav";
 
 interface LeadListProps {
   leads: Lead[];
@@ -25,6 +26,7 @@ interface LeadListProps {
 }
 
 export function LeadList({ leads, onEditLead, onEtapaChange }: LeadListProps) {
+  const openWhatsApp = useWhatsAppNav();
   if (leads.length === 0) {
     return (
       <div className="rounded-xl border border-slate-800 bg-slate-900/60 py-16 text-center text-sm text-slate-400">
@@ -73,9 +75,13 @@ export function LeadList({ leads, onEditLead, onEtapaChange }: LeadListProps) {
                         href={wa ?? undefined}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          void openWhatsApp(lead.telefone, wa);
+                        }}
                         className="text-slate-300 hover:text-emerald-400"
-                        title="Chamar no WhatsApp"
+                        title="Abrir conversa"
                       >
                         {lead.telefone}
                       </a>

@@ -19,6 +19,7 @@ import {
   temperatura,
   waLink,
 } from "@/lib/leads";
+import { useWhatsAppNav } from "./use-whatsapp-nav";
 
 interface LeadCardProps {
   lead: Lead;
@@ -35,6 +36,7 @@ export function LeadCard({ lead, onEdit, isOverlay }: LeadCardProps) {
   const tempMeta = TEMPERATURAS[temp];
   const etapa = LEAD_ETAPAS.find((e) => e.id === lead.etapa);
   const wa = waLink(lead);
+  const openWhatsApp = useWhatsAppNav();
 
   return (
     <div
@@ -84,9 +86,13 @@ export function LeadCard({ lead, onEdit, isOverlay }: LeadCardProps) {
           href={wa ?? undefined}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            void openWhatsApp(lead.telefone, wa);
+          }}
           className="mt-2 flex items-center gap-2 pl-1 text-xs text-slate-300 hover:text-primary"
-          title="Chamar no WhatsApp"
+          title="Abrir conversa"
         >
           <Phone className="h-3 w-3 shrink-0 text-slate-500" />
           <span className="truncate">{lead.telefone}</span>
@@ -135,7 +141,11 @@ export function LeadCard({ lead, onEdit, isOverlay }: LeadCardProps) {
           href={wa}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            void openWhatsApp(lead.telefone, wa);
+          }}
           className="mt-3 flex items-center justify-center gap-2 rounded-full border border-slate-600 py-1.5 text-xs font-medium text-slate-200 transition-colors hover:border-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-400"
         >
           <MessageCircle className="h-3.5 w-3.5 text-emerald-500" />

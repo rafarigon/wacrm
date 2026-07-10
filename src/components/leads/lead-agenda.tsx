@@ -3,6 +3,7 @@
 import type { Lead } from "@/types";
 import { LEAD_ETAPAS, waLink } from "@/lib/leads";
 import { Building2, CalendarDays, MessageCircle } from "lucide-react";
+import { useWhatsAppNav } from "./use-whatsapp-nav";
 
 interface LeadAgendaProps {
   leads: Lead[];
@@ -11,6 +12,7 @@ interface LeadAgendaProps {
 
 // Agenda de visitas: só leads com data_visita, agrupados por dia.
 export function LeadAgenda({ leads, onEditLead }: LeadAgendaProps) {
+  const openWhatsApp = useWhatsAppNav();
   const comVisita = leads
     .filter((l) => l.data_visita)
     .sort(
@@ -104,8 +106,12 @@ export function LeadAgenda({ leads, onEditLead }: LeadAgendaProps) {
                       href={wa}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      title="Chamar no WhatsApp"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        void openWhatsApp(lead.telefone, wa);
+                      }}
+                      title="Abrir conversa"
                       className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-700 text-emerald-500 transition-colors hover:border-emerald-500 hover:bg-emerald-500/10"
                     >
                       <MessageCircle className="h-4 w-4" />
