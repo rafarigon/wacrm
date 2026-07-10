@@ -60,9 +60,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // API routes that need auth (not webhooks)
+  // API routes that need auth (not webhooks — Meta's /webhook and WAHA's
+  // /waha-webhook both authenticate themselves via HMAC signature)
   if (!user && request.nextUrl.pathname.startsWith('/api/whatsapp/') &&
-      !request.nextUrl.pathname.includes('/webhook')) {
+      !request.nextUrl.pathname.includes('webhook')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
