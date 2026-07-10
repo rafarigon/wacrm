@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   chatIdFromPhone,
+  getLidPhoneNumber,
   sendTextMessage,
   sendMediaMessage,
   setReaction,
@@ -144,6 +145,47 @@ describe("sendMediaMessage", () => {
       filename: "tabela.pdf",
     });
     expect(body.caption).toBe("Tabela de preços");
+  });
+});
+
+describe("getLidPhoneNumber", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("resolves a LID to the real chat id via /api/{session}/lids/{lid}", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() =>
+        okJson({ lid: "786113278038@lid", pn: "554192882468@c.us" }),
+      ),
+    );
+    const pn = await getLidPhoneNumber({
+      ...BASE_ARGS,
+      lid: "786113278038@lid",
+    });
+    expect(pn).toBe("554192882468@c.us");
+    const [url, init] = vi.mocked(fetch).mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(
+      "http://waha.local:3001/api/default/lids/786113278038%40lid",
+    );
+    expect((init.headers as Record<string, string>)["X-Api-Key"]).toBe("test-key");
+  });
+
+  it("returns null when the mapping is unknown (404)", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() => Promise.resolve(new Response("", { status: 404 }))),
+    );
+    expect(
+      await getLidPhoneNumber({ ...BASE_ARGS, lid: "999@lid" }),
+    ).toBeNull();
+  });
+
+  it("returns null for an empty lid without a network call", async () => {
+    vi.stubGlobal("fetch", vi.fn());
+    expect(await getLidPhoneNumber({ ...BASE_ARGS, lid: "" })).toBeNull();
+    expect(fetch).not.toHaveBeenCalled();
   });
 });
 

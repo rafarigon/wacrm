@@ -171,6 +171,37 @@ export async function sendMediaMessage(
   return { messageId: extractMessageId(data) }
 }
 
+export interface GetLidPhoneNumberArgs {
+  baseUrl: string
+  apiKey: string
+  session: string
+  /** WhatsApp anonymous address, e.g. `786113278038@lid`. */
+  lid: string
+}
+
+/**
+ * Resolve a WhatsApp anonymous LID address to the contact's real chat id
+ * (`<digits>@c.us`). WhatsApp hides phone numbers behind LIDs for some
+ * contacts; WAHA keeps the mapping per session. Returns null when the
+ * mapping isn't known (yet) — callers should skip the event rather than
+ * store a LID as a phone number.
+ */
+export async function getLidPhoneNumber(
+  args: GetLidPhoneNumberArgs,
+): Promise<string | null> {
+  const { baseUrl, apiKey, session, lid } = args
+  if (!lid) return null
+  const url = `${baseUrl.replace(/\/+$/, '')}/api/${session}/lids/${encodeURIComponent(lid)}`
+  const response = await fetch(url, { headers: { 'X-Api-Key': apiKey } })
+  if (!response.ok) return null
+  try {
+    const data = (await response.json()) as { pn?: string }
+    return data.pn || null
+  } catch {
+    return null
+  }
+}
+
 export interface WahaSetReactionArgs {
   baseUrl: string
   apiKey: string
