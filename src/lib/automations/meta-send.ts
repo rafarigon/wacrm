@@ -1,4 +1,5 @@
-import { sendTextMessage, sendTemplateMessage } from '@/lib/whatsapp/meta-api'
+import { sendTemplateMessage } from '@/lib/whatsapp/meta-api'
+import { isWahaConfig, sendProviderText } from '@/lib/whatsapp/send-provider'
 import { decrypt } from '@/lib/whatsapp/encryption'
 import {
   sanitizePhoneForMeta,
@@ -94,6 +95,15 @@ async function sendViaMeta(input: SendInput): Promise<{ whatsapp_message_id: str
 
   const accessToken = decrypt(config.access_token)
 
+  // Templates are a Meta Cloud API concept and don't exist on the
+  // consumer protocol WAHA rides — fail the automation step with an
+  // actionable message instead of silently sending nothing.
+  if (input.kind === 'template' && isWahaConfig(config)) {
+    throw new Error(
+      'Template messages are not supported on the WAHA provider — use a send_message (text) step instead.',
+    )
+  }
+
   const attempt = async (phone: string): Promise<string> => {
     if (input.kind === 'template') {
       const r = await sendTemplateMessage({
@@ -106,8 +116,8 @@ async function sendViaMeta(input: SendInput): Promise<{ whatsapp_message_id: str
       })
       return r.messageId
     }
-    const r = await sendTextMessage({
-      phoneNumberId: config.phone_number_id,
+    const r = await sendProviderText({
+      config,
       accessToken,
       to: phone,
       text: input.text,

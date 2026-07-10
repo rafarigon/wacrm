@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { sendTemplateMessage } from '@/lib/whatsapp/meta-api'
+import { isWahaConfig } from '@/lib/whatsapp/send-provider'
 import { decrypt } from '@/lib/whatsapp/encryption'
 import type { SendTimeParams } from '@/lib/whatsapp/template-send-builder'
 import { isMessageTemplate } from '@/lib/whatsapp/template-row-guard'
@@ -151,6 +152,16 @@ export async function POST(request: Request) {
     }
 
     const accessToken = decrypt(config.access_token)
+
+    // Broadcasts are template-based, and templates are a Meta Cloud
+    // API concept — they don't exist on the WAHA provider. Reject the
+    // whole broadcast up front instead of failing every recipient.
+    if (isWahaConfig(config)) {
+      return NextResponse.json(
+        { error: 'Broadcasts (template messages) are not supported on the WAHA provider.' },
+        { status: 400 }
+      )
+    }
 
     // Load the template row once so sendTemplateMessage can build
     // header + button components on each iteration. Loading inside

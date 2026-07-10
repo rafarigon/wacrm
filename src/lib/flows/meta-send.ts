@@ -1,12 +1,15 @@
 import {
   sendInteractiveButtons,
   sendInteractiveList,
-  sendMediaMessage,
-  sendTextMessage,
   type InteractiveButton,
   type InteractiveListSection,
   type MediaKind,
 } from '@/lib/whatsapp/meta-api'
+import {
+  isWahaConfig,
+  sendProviderMedia,
+  sendProviderText,
+} from '@/lib/whatsapp/send-provider'
 import { decrypt } from '@/lib/whatsapp/encryption'
 import {
   sanitizePhoneForMeta,
@@ -89,8 +92,8 @@ export async function engineSendText(
   const accessToken = decrypt(config.access_token)
 
   const attempt = async (phone: string): Promise<string> => {
-    const r = await sendTextMessage({
-      phoneNumberId: config.phone_number_id,
+    const r = await sendProviderText({
+      config,
       accessToken,
       to: phone,
       text: args.text,
@@ -198,8 +201,8 @@ export async function engineSendMedia(
   const accessToken = decrypt(config.access_token)
 
   const attempt = async (phone: string): Promise<string> => {
-    const r = await sendMediaMessage({
-      phoneNumberId: config.phone_number_id,
+    const r = await sendProviderMedia({
+      config,
       accessToken,
       to: phone,
       kind: args.kind,
@@ -348,6 +351,16 @@ async function sendInteractiveViaMeta(
   }
 
   const accessToken = decrypt(config.access_token)
+
+  // Interactive buttons/lists are Cloud API features; on the consumer
+  // protocol WAHA rides they no longer render on modern clients, and
+  // the flow engine's reply matching (interactive_reply ids) would
+  // never fire. Fail the run with an actionable message instead.
+  if (isWahaConfig(config)) {
+    throw new Error(
+      'Interactive buttons/lists are not supported on the WAHA provider — use text prompts (collect_input) instead.',
+    )
+  }
 
   const attempt = async (phone: string): Promise<string> => {
     if (input.kind === 'buttons') {

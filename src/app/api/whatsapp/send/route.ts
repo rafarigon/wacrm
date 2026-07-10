@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { sendTextMessage, sendTemplateMessage } from '@/lib/whatsapp/meta-api'
+import { sendTemplateMessage } from '@/lib/whatsapp/meta-api'
+import { isWahaConfig, sendProviderText } from '@/lib/whatsapp/send-provider'
 import { decrypt, encrypt, isLegacyFormat } from '@/lib/whatsapp/encryption'
 import { supabaseAdmin } from '@/lib/flows/admin-client'
 import {
@@ -139,6 +140,16 @@ export async function POST(request: Request) {
 
     const accessToken = decrypt(config.access_token)
 
+    // Templates are a Meta Cloud API concept — WAHA speaks the consumer
+    // protocol where they don't exist. Reject loudly instead of
+    // degrading to a plain text the user never approved.
+    if (message_type === 'template' && isWahaConfig(config)) {
+      return NextResponse.json(
+        { error: 'Template messages are not supported on the WAHA provider.' },
+        { status: 400 }
+      )
+    }
+
     // Self-heal legacy CBC-encrypted tokens. Fire-and-forget: we
     // return from the send without waiting, so a failed upgrade just
     // means the next send tries again. The upgrade is idempotent —
@@ -246,8 +257,8 @@ export async function POST(request: Request) {
         })
         return result.messageId
       }
-      const result = await sendTextMessage({
-        phoneNumberId: config.phone_number_id,
+      const result = await sendProviderText({
+        config,
         accessToken,
         to: phone,
         text: content_text,
@@ -281,10 +292,10 @@ export async function POST(request: Request) {
 
       if (lastError) throw lastError
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown Meta API error'
-      console.error('Meta API send failed for all variants:', message)
+      const message = err instanceof Error ? err.message : 'Unknown provider error'
+      console.error('WhatsApp send failed for all variants:', message)
       return NextResponse.json(
-        { error: `Meta API error: ${message}` },
+        { error: `WhatsApp send error: ${message}` },
         { status: 502 }
       )
     }

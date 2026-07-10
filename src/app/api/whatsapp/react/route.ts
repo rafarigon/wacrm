@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendReactionMessage } from '@/lib/whatsapp/meta-api';
+import { isWahaConfig } from '@/lib/whatsapp/send-provider';
+import { setReaction as wahaSetReaction } from '@/lib/whatsapp/waha-api';
 import { decrypt } from '@/lib/whatsapp/encryption';
 import { sanitizePhoneForMeta } from '@/lib/whatsapp/phone-utils';
 import {
@@ -111,7 +113,7 @@ export async function POST(request: Request) {
     // WhatsApp config + access token. Account-scoped post-multi-user.
     const { data: config, error: configError } = await supabase
       .from('whatsapp_config')
-      .select('phone_number_id, access_token')
+      .select('phone_number_id, access_token, provider, waha_url, waha_session')
       .eq('account_id', accountId)
       .single();
 
@@ -126,19 +128,30 @@ export async function POST(request: Request) {
     const sanitizedPhone = sanitizePhoneForMeta(contact.phone);
 
     try {
-      await sendReactionMessage({
-        phoneNumberId: config.phone_number_id,
-        accessToken,
-        to: sanitizedPhone,
-        targetMessageId: targetMessage.message_id,
-        emoji,
-      });
+      if (isWahaConfig(config)) {
+        if (!config.waha_url) throw new Error('waha_url is not set on whatsapp_config.');
+        await wahaSetReaction({
+          baseUrl: config.waha_url,
+          apiKey: accessToken,
+          session: config.waha_session || 'default',
+          messageId: targetMessage.message_id,
+          emoji,
+        });
+      } else {
+        await sendReactionMessage({
+          phoneNumberId: config.phone_number_id,
+          accessToken,
+          to: sanitizedPhone,
+          targetMessageId: targetMessage.message_id,
+          emoji,
+        });
+      }
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : 'Unknown Meta API error';
-      console.error('[whatsapp/react] Meta send failed:', message);
+        err instanceof Error ? err.message : 'Unknown provider error';
+      console.error('[whatsapp/react] send failed:', message);
       return NextResponse.json(
-        { error: `Meta API error: ${message}` },
+        { error: `WhatsApp reaction error: ${message}` },
         { status: 502 },
       );
     }
