@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, after } from 'next/server'
 import { supabaseAdmin } from '@/lib/flows/admin-client'
 import { decrypt } from '@/lib/whatsapp/encryption'
 import { getLidPhoneNumber } from '@/lib/whatsapp/waha-api'
@@ -32,9 +32,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  processEvent(event).catch((error) => {
-    console.error('[waha-webhook] error processing event:', error)
-  })
+  // after() (not fire-and-forget) — on Vercel the serverless instance
+  // freezes as soon as the response is sent, killing detached promises.
+  // after() keeps the function alive until processing completes.
+  after(() =>
+    processEvent(event).catch((error) => {
+      console.error('[waha-webhook] error processing event:', error)
+    }),
+  )
 
   return NextResponse.json({ status: 'received' }, { status: 200 })
 }
