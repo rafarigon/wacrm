@@ -17,7 +17,7 @@
 
 import { decrypt } from '@/lib/whatsapp/encryption'
 import { getMediaUrl } from '@/lib/whatsapp/meta-api'
-import { normalizePhone } from '@/lib/whatsapp/phone-utils'
+import { normalizePhone, phonesMatch } from '@/lib/whatsapp/phone-utils'
 import { findExistingContact, isUniqueViolation } from '@/lib/contacts/dedupe'
 import { runAutomationsForTrigger } from '@/lib/automations/engine'
 import { dispatchInboundToFlows } from '@/lib/flows/engine'
@@ -321,6 +321,65 @@ async function flagBroadcastReplyIfAny(accountId: string, contactId: string) {
 }
 
 /**
+ * Ensure the sender has a lead in the funnel (RR customization).
+ *
+ * Fires on the contact's first-ever inbound message. Dedupe follows the
+ * findExistingContact pattern: SQL pre-filter by the last-8-digit
+ * suffix, then the strict `phonesMatch` in JS — the suffix comparison
+ * also bridges format differences between rows created here (national
+ * format from `contacts`) and rows the sync worker mirrors from Twenty
+ * (international `+55...`). score/etapa take the table defaults
+ * (100 / 'novo'), so the lead lands hot at the top of the Kanban.
+ */
+async function ensureLeadForContact(
+  accountId: string,
+  configOwnerUserId: string,
+  contact: { name?: string | null; phone?: string | null },
+  firstMessage: string,
+) {
+  try {
+    const phone = contact.phone || ''
+    const digits = phone.replace(/\D/g, '')
+    if (!digits) return
+
+    const suffix = digits.length >= 8 ? digits.slice(-8) : digits
+    const { data: candidates, error: findError } = await supabaseAdmin()
+      .from('leads')
+      .select('id, telefone')
+      .eq('account_id', accountId)
+      .ilike('telefone', `%${suffix}%`)
+      .limit(10)
+    if (findError) {
+      console.error('[inbound] lead lookup failed:', findError.message)
+      return
+    }
+    const exists = (candidates || []).some(
+      (l: { telefone: string | null }) => l.telefone && phonesMatch(l.telefone, phone),
+    )
+    if (exists) return
+
+    const { error: insertError } = await supabaseAdmin().from('leads').insert({
+      account_id: accountId,
+      user_id: configOwnerUserId,
+      nome: contact.name || phone,
+      telefone: phone,
+      origem: 'whatsapp',
+      notas: firstMessage ? `1ª mensagem: ${firstMessage.slice(0, 300)}` : null,
+    })
+    if (insertError) {
+      console.error('[inbound] lead auto-create failed:', insertError.message)
+      return
+    }
+    console.log('[inbound] lead criado do WhatsApp:', contact.name || phone)
+  } catch (err) {
+    console.error(
+      '[inbound] ensureLeadForContact threw:',
+      err instanceof Error ? err.message : err,
+    )
+  }
+}
+
+/**
  * Resolve a Meta-side message_id into the matching internal UUID, scoped
  * to one conversation. Returns null when we never received the parent
  * (e.g. a swipe-reply to a message older than this CRM install).
@@ -538,6 +597,18 @@ export async function processMessage(
   // so the broadcast's `replied_count` advances (via the aggregate
   // trigger installed in migration 003).
   await flagBroadcastReplyIfAny(accountId, contactRecord.id)
+
+  // First inbound message from this number = a fresh lead in the funnel
+  // (RR customization — the sync worker then mirrors it to Twenty).
+  // Best-effort: a failure here must not break message processing.
+  if (isFirstInboundMessage) {
+    await ensureLeadForContact(
+      accountId,
+      configOwnerUserId,
+      contactRecord,
+      contentText ?? message.text?.body ?? '',
+    )
+  }
 
   // ============================================================
   // Flow runner dispatch.
