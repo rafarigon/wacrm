@@ -135,7 +135,7 @@ export function NodeConfigForm({
             rows={2}
           />
           <div>
-            <label className="mb-1 block text-xs text-slate-400">
+            <label className="mb-1 block text-xs text-gray-500">
               Variable key (stored in flow_runs.vars; alphanumeric + underscore)
             </label>
             <Input
@@ -146,11 +146,11 @@ export function NodeConfigForm({
                 })
               }
               placeholder="e.g. name, email, company"
-              className="bg-slate-800 font-mono text-xs"
+              className="bg-white font-mono text-xs"
             />
-            <p className="mt-1 text-[10px] text-slate-500">
+            <p className="mt-1 text-[10px] text-gray-400">
               Interpolate in downstream prompts and handoff notes with{" "}
-              <code className="rounded bg-slate-800 px-1">
+              <code className="rounded bg-white px-1">
                 {"{{vars."}
                 {(cfg as { var_key?: string }).var_key || "name"}
                 {"}}"}
@@ -200,7 +200,7 @@ export function NodeConfigForm({
 
     case "end":
       return (
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-gray-400">
           Terminal node. When the runner reaches this node the run is marked
           complete. No config needed.
         </p>
@@ -269,7 +269,7 @@ function SendButtonsForm({
       />
       <div>
         <div className="mb-2 flex items-center justify-between">
-          <label className="text-xs text-slate-400">
+          <label className="text-xs text-gray-500">
             Buttons (1–3) — each one routes to a different next node
           </label>
         </div>
@@ -278,7 +278,7 @@ function SendButtonsForm({
             <div
               key={i}
               className={cn(
-                "grid grid-cols-1 gap-2 rounded-md border border-slate-800 bg-slate-800/40 p-3",
+                "grid grid-cols-1 gap-2 rounded-md border border-gray-200 bg-gray-50 p-3",
                 showAdvanced
                   ? "md:grid-cols-[1fr_2fr_2fr_auto]"
                   : "md:grid-cols-[2fr_2fr_auto]",
@@ -293,14 +293,14 @@ function SendButtonsForm({
                     })
                   }
                   placeholder="reply_id"
-                  className="bg-slate-800 font-mono text-xs"
+                  className="bg-white font-mono text-xs"
                 />
               )}
               <Input
                 value={b.title}
                 onChange={(e) => updateButton(i, { title: e.target.value })}
                 placeholder="Visible title (≤20 chars)"
-                className="bg-slate-800"
+                className="bg-white"
                 maxLength={20}
               />
               <NodeKeySelect
@@ -314,7 +314,7 @@ function SendButtonsForm({
                 variant="ghost"
                 size="sm"
                 onClick={() => removeButton(i)}
-                className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                className="text-red-600 hover:bg-red-500/10 hover:text-red-700"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
@@ -465,13 +465,13 @@ function SendListForm({
       </div>
 
       <div className="mt-2">
-        <label className="mb-2 block text-xs text-slate-400">
+        <label className="mb-2 block text-xs text-gray-500">
           Rows (1–10 total across all sections)
         </label>
         {sections.map((section, sIdx) => (
           <div
             key={sIdx}
-            className="mb-3 rounded-md border border-slate-800 bg-slate-800/40 p-3"
+            className="mb-3 rounded-md border border-gray-200 bg-gray-50 p-3"
           >
             <div className="mb-2 flex items-center gap-2">
               <Input
@@ -480,14 +480,14 @@ function SendListForm({
                   updateSection(sIdx, { title: e.target.value })
                 }
                 placeholder={`Section ${sIdx + 1} title (optional)`}
-                className="bg-slate-800 text-xs"
+                className="bg-white text-xs"
               />
               {sections.length > 1 && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => removeSection(sIdx)}
-                  className="shrink-0 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                  className="shrink-0 text-red-600 hover:bg-red-500/10 hover:text-red-700"
                   aria-label="Remove section"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -516,7 +516,7 @@ function SendListForm({
                       })
                     }
                     placeholder="reply_id"
-                    className="bg-slate-800 font-mono text-xs"
+                    className="bg-white font-mono text-xs"
                   />
                 )}
                 <Input
@@ -525,7 +525,7 @@ function SendListForm({
                     updateRow(sIdx, rIdx, { title: e.target.value })
                   }
                   placeholder="Row title (≤24)"
-                  className="bg-slate-800"
+                  className="bg-white"
                   maxLength={24}
                 />
                 <NodeKeySelect
@@ -541,7 +541,7 @@ function SendListForm({
                   variant="ghost"
                   size="sm"
                   onClick={() => removeRow(sIdx, rIdx)}
-                  className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                  className="text-red-600 hover:bg-red-500/10 hover:text-red-700"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>
@@ -614,14 +614,14 @@ function ConditionForm({
     <>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         <div>
-          <label className="mb-1 block text-xs text-slate-400">If</label>
+          <label className="mb-1 block text-xs text-gray-500">If</label>
           <Select
             value={subject}
             onValueChange={(v) =>
               onUpdateConfig({ subject: v as ConditionCfg["subject"] })
             }
           >
-            <SelectTrigger className="bg-slate-800">
+            <SelectTrigger className="bg-white">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -632,7 +632,7 @@ function ConditionForm({
           </Select>
         </div>
         <div className="md:col-span-2">
-          <label className="mb-1 block text-xs text-slate-400">
+          <label className="mb-1 block text-xs text-gray-500">
             {subject === "var"
               ? "var name"
               : subject === "tag"
@@ -644,7 +644,7 @@ function ConditionForm({
               value={cfg.subject_key ?? ""}
               onValueChange={(v) => onUpdateConfig({ subject_key: v })}
             >
-              <SelectTrigger className="bg-slate-800">
+              <SelectTrigger className="bg-white">
                 <SelectValue placeholder="Pick a tag…" />
               </SelectTrigger>
               <SelectContent>
@@ -660,7 +660,7 @@ function ConditionForm({
               value={cfg.subject_key ?? ""}
               onValueChange={(v) => onUpdateConfig({ subject_key: v })}
             >
-              <SelectTrigger className="bg-slate-800">
+              <SelectTrigger className="bg-white">
                 <SelectValue placeholder="Pick a field…" />
               </SelectTrigger>
               <SelectContent>
@@ -677,7 +677,7 @@ function ConditionForm({
                 onUpdateConfig({ subject_key: e.target.value })
               }
               placeholder={subject === "var" ? "e.g. email" : "tag UUID"}
-              className="bg-slate-800 font-mono text-xs"
+              className="bg-white font-mono text-xs"
             />
           )}
         </div>
@@ -690,14 +690,14 @@ function ConditionForm({
         )}
       >
         <div>
-          <label className="mb-1 block text-xs text-slate-400">Operator</label>
+          <label className="mb-1 block text-xs text-gray-500">Operator</label>
           <Select
             value={operator}
             onValueChange={(v) =>
               onUpdateConfig({ operator: v as ConditionCfg["operator"] })
             }
           >
-            <SelectTrigger className="bg-slate-800">
+            <SelectTrigger className="bg-white">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -710,11 +710,11 @@ function ConditionForm({
         </div>
         {showValue && (
           <div>
-            <label className="mb-1 block text-xs text-slate-400">Value</label>
+            <label className="mb-1 block text-xs text-gray-500">Value</label>
             <Input
               value={cfg.value ?? ""}
               onChange={(e) => onUpdateConfig({ value: e.target.value })}
-              className="bg-slate-800"
+              className="bg-white"
             />
           </div>
         )}
@@ -767,14 +767,14 @@ function SetTagForm({
     <>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <div>
-          <label className="mb-1 block text-xs text-slate-400">Action</label>
+          <label className="mb-1 block text-xs text-gray-500">Action</label>
           <Select
             value={cfg.mode ?? "add"}
             onValueChange={(v) =>
               onUpdateConfig({ mode: v as SetTagCfg["mode"] })
             }
           >
-            <SelectTrigger className="bg-slate-800">
+            <SelectTrigger className="bg-white">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -784,13 +784,13 @@ function SetTagForm({
           </Select>
         </div>
         <div>
-          <label className="mb-1 block text-xs text-slate-400">Tag</label>
+          <label className="mb-1 block text-xs text-gray-500">Tag</label>
           {tags.length > 0 ? (
             <Select
               value={cfg.tag_id ?? ""}
               onValueChange={(v) => onUpdateConfig({ tag_id: v })}
             >
-              <SelectTrigger className="bg-slate-800">
+              <SelectTrigger className="bg-white">
                 <SelectValue placeholder="Pick a tag…" />
               </SelectTrigger>
               <SelectContent>
@@ -806,7 +806,7 @@ function SetTagForm({
               value={cfg.tag_id ?? ""}
               onChange={(e) => onUpdateConfig({ tag_id: e.target.value })}
               placeholder="Tag UUID"
-              className="bg-slate-800 font-mono text-xs"
+              className="bg-white font-mono text-xs"
             />
           )}
         </div>
@@ -972,7 +972,7 @@ function SendMediaForm({
   return (
     <>
       <div>
-        <label className="mb-1 block text-xs text-slate-400">Media type</label>
+        <label className="mb-1 block text-xs text-gray-500">Media type</label>
         <Select
           value={mediaType}
           onValueChange={(v) => {
@@ -986,7 +986,7 @@ function SendMediaForm({
             });
           }}
         >
-          <SelectTrigger className="bg-slate-800">
+          <SelectTrigger className="bg-white">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -1000,15 +1000,15 @@ function SendMediaForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-xs text-slate-400">File</label>
+        <label className="mb-1 block text-xs text-gray-500">File</label>
         {cfg.media_url ? (
-          <div className="flex items-center gap-2 rounded-md border border-slate-700 bg-slate-800 px-3 py-2 text-xs">
-            <Paperclip className="h-3.5 w-3.5 shrink-0 text-cyan-400" />
+          <div className="flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-xs">
+            <Paperclip className="h-3.5 w-3.5 shrink-0 text-cyan-600" />
             <a
               href={cfg.media_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="min-w-0 flex-1 truncate text-slate-200 hover:text-cyan-300"
+              className="min-w-0 flex-1 truncate text-gray-800 hover:text-cyan-700"
               title={displayName || cfg.media_url}
             >
               {displayName || cfg.media_url}
@@ -1016,7 +1016,7 @@ function SendMediaForm({
             <button
               type="button"
               onClick={handleClear}
-              className="rounded p-1 text-slate-400 hover:bg-slate-700 hover:text-slate-200"
+              className="rounded p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-800"
               aria-label="Remove file"
               disabled={uploading}
             >
@@ -1028,7 +1028,7 @@ function SendMediaForm({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-slate-700 bg-slate-900 px-3 py-4 text-xs text-slate-400 transition-colors hover:border-slate-600 hover:bg-slate-800 hover:text-slate-200 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-gray-200 bg-gray-50 px-3 py-4 text-xs text-gray-500 transition-colors hover:border-gray-400 hover:bg-gray-50 hover:text-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {uploading ? (
               <>
@@ -1066,14 +1066,14 @@ function SendMediaForm({
 
       {isDocument && (
         <div>
-          <label className="mb-1 block text-xs text-slate-400">
+          <label className="mb-1 block text-xs text-gray-500">
             Filename shown to the customer (documents only)
           </label>
           <Input
             value={cfg.filename ?? ""}
             onChange={(e) => onUpdateConfig({ filename: e.target.value })}
             placeholder="invoice.pdf"
-            className="bg-slate-800 text-xs"
+            className="bg-white text-xs"
           />
         </div>
       )}

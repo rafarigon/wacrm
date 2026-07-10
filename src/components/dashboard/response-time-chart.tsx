@@ -44,32 +44,32 @@ export function ResponseTimeChart({
     })) ?? []
 
   return (
-    <section className="rounded-xl border border-slate-800 bg-slate-900">
-      <header className="flex items-center justify-between gap-3 border-b border-slate-800 px-5 py-4">
+    <section className="rounded-xl border border-gray-200 bg-gray-50">
+      <header className="flex items-center justify-between gap-3 border-b border-gray-200 px-5 py-4">
         <div>
-          <h2 className="text-sm font-semibold text-white">
+          <h2 className="text-sm font-semibold text-gray-900">
             Average First Response Time
           </h2>
-          <p className="mt-0.5 text-xs text-slate-500">
+          <p className="mt-0.5 text-xs text-gray-400">
             Minutes to reply to a customer&apos;s first unreplied message, by
             weekday
           </p>
         </div>
         <div className="flex items-center gap-3 text-right text-xs">
           {thresholdMinutes > 0 && (
-            <span className="rounded-full border border-rose-500/40 bg-rose-500/10 px-2 py-0.5 font-medium text-rose-300 tabular-nums">
+            <span className="rounded-full border border-rose-500/40 bg-rose-500/10 px-2 py-0.5 font-medium text-rose-700 tabular-nums">
               target {thresholdMinutes}m
             </span>
           )}
           {data && (data.thisWeekAvg != null || data.lastWeekAvg != null) && (
             <div>
-              <div className="text-slate-400">
+              <div className="text-gray-500">
                 This week:{' '}
-                <span className="font-medium text-white tabular-nums">
+                <span className="font-medium text-gray-900 tabular-nums">
                   {fmt(data.thisWeekAvg)}
                 </span>
               </div>
-              <div className="text-slate-500">
+              <div className="text-gray-400">
                 Last week:{' '}
                 <span className="tabular-nums">{fmt(data.lastWeekAvg)}</span>
               </div>

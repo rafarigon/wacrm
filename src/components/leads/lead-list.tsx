@@ -29,24 +29,24 @@ export function LeadList({ leads, onEditLead, onEtapaChange }: LeadListProps) {
   const openWhatsApp = useWhatsAppNav();
   if (leads.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-800 bg-slate-900/60 py-16 text-center text-sm text-slate-400">
+      <div className="rounded-xl border border-gray-200 bg-gray-50/80 py-16 text-center text-sm text-gray-500">
         Nenhum lead neste filtro.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/60">
+    <div className="overflow-x-auto rounded-xl border border-gray-200 bg-gray-50/80">
       <Table>
         <TableHeader>
-          <TableRow className="border-slate-800 hover:bg-transparent">
-            <TableHead className="text-slate-400">Nome</TableHead>
-            <TableHead className="text-slate-400">Contato</TableHead>
-            <TableHead className="text-slate-400">Imóvel</TableHead>
-            <TableHead className="text-slate-400">Origem</TableHead>
-            <TableHead className="text-slate-400">Score</TableHead>
-            <TableHead className="text-slate-400">Etapa</TableHead>
-            <TableHead className="text-right text-slate-400">Criado</TableHead>
+          <TableRow className="border-gray-200 hover:bg-transparent">
+            <TableHead className="text-gray-500">Nome</TableHead>
+            <TableHead className="text-gray-500">Contato</TableHead>
+            <TableHead className="text-gray-500">Imóvel</TableHead>
+            <TableHead className="text-gray-500">Origem</TableHead>
+            <TableHead className="text-gray-500">Score</TableHead>
+            <TableHead className="text-gray-500">Etapa</TableHead>
+            <TableHead className="text-right text-gray-500">Criado</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -58,12 +58,12 @@ export function LeadList({ leads, onEditLead, onEtapaChange }: LeadListProps) {
               <TableRow
                 key={lead.id}
                 onClick={() => onEditLead(lead)}
-                className="cursor-pointer border-slate-800 hover:bg-slate-800/50"
+                className="cursor-pointer border-gray-200 hover:bg-gray-50"
               >
-                <TableCell className="font-medium text-white">
+                <TableCell className="font-medium text-gray-900">
                   {lead.nome}
                   {lead.corretor_nome && (
-                    <div className="text-[10.5px] font-normal text-slate-500">
+                    <div className="text-[10.5px] font-normal text-gray-400">
                       via {lead.corretor_nome}
                     </div>
                   )}
@@ -80,7 +80,7 @@ export function LeadList({ leads, onEditLead, onEtapaChange }: LeadListProps) {
                           e.preventDefault();
                           void openWhatsApp(lead.telefone, wa);
                         }}
-                        className="text-slate-300 hover:text-emerald-400"
+                        className="text-gray-700 hover:text-emerald-600"
                         title="Abrir conversa"
                       >
                         {lead.telefone}
@@ -90,17 +90,17 @@ export function LeadList({ leads, onEditLead, onEtapaChange }: LeadListProps) {
                       <a
                         href={`mailto:${lead.email}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="text-slate-400 hover:text-primary"
+                        className="text-gray-500 hover:text-primary"
                       >
                         {lead.email}
                       </a>
                     )}
                   </div>
                 </TableCell>
-                <TableCell className="text-slate-300">
+                <TableCell className="text-gray-700">
                   {lead.imovel ?? "—"}
                 </TableCell>
-                <TableCell className="text-slate-400">
+                <TableCell className="text-gray-500">
                   {lead.origem ?? "—"}
                 </TableCell>
                 <TableCell>
@@ -122,7 +122,7 @@ export function LeadList({ leads, onEditLead, onEtapaChange }: LeadListProps) {
                     onChange={(e) =>
                       onEtapaChange(lead.id, e.target.value as LeadEtapa)
                     }
-                    className="h-8 rounded-lg border border-slate-700 bg-slate-800 px-2 text-xs text-white outline-none focus:border-primary"
+                    className="h-8 rounded-lg border border-gray-200 bg-white px-2 text-xs text-gray-900 outline-none focus:border-primary"
                   >
                     {LEAD_ETAPAS.map((e) => (
                       <option key={e.id} value={e.id}>
@@ -131,7 +131,7 @@ export function LeadList({ leads, onEditLead, onEtapaChange }: LeadListProps) {
                     ))}
                   </select>
                 </TableCell>
-                <TableCell className="text-right text-xs text-slate-500">
+                <TableCell className="text-right text-xs text-gray-400">
                   {fmtDataCurta(lead.created_at)}
                 </TableCell>
               </TableRow>

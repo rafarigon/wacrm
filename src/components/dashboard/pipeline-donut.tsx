@@ -15,10 +15,10 @@ interface PipelineDonutProps {
 
 export function PipelineDonut({ data, loading, currency }: PipelineDonutProps) {
   return (
-    <section className="flex h-full flex-col rounded-xl border border-slate-800 bg-slate-900">
-      <header className="border-b border-slate-800 px-5 py-4">
-        <h2 className="text-sm font-semibold text-white">Pipeline Value</h2>
-        <p className="mt-0.5 text-xs text-slate-500">
+    <section className="flex h-full flex-col rounded-xl border border-gray-200 bg-gray-50">
+      <header className="border-b border-gray-200 px-5 py-4">
+        <h2 className="text-sm font-semibold text-gray-900">Pipeline Value</h2>
+        <p className="mt-0.5 text-xs text-gray-400">
           Open deals by stage
         </p>
       </header>
@@ -43,11 +43,11 @@ export function PipelineDonut({ data, loading, currency }: PipelineDonutProps) {
                     style={{ background: s.color }}
                     aria-hidden
                   />
-                  <span className="flex-1 truncate text-slate-300">{s.name}</span>
-                  <span className="text-slate-500 tabular-nums">
+                  <span className="flex-1 truncate text-gray-700">{s.name}</span>
+                  <span className="text-gray-400 tabular-nums">
                     {s.dealCount} deal{s.dealCount === 1 ? '' : 's'}
                   </span>
-                  <span className="w-20 text-right text-slate-300 tabular-nums">
+                  <span className="w-20 text-right text-gray-700 tabular-nums">
                     {formatCurrencyShort(s.totalValue, currency)}
                   </span>
                 </li>

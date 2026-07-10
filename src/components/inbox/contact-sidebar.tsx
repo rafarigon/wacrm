@@ -117,8 +117,8 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
 
   if (!contact) {
     return (
-      <div className="flex h-full w-70 items-center justify-center border-l border-slate-800 bg-slate-900">
-        <p className="text-sm text-slate-500">Select a conversation</p>
+      <div className="flex h-full w-70 items-center justify-center border-l border-gray-200 bg-gray-50">
+        <p className="text-sm text-gray-400">Select a conversation</p>
       </div>
     );
   }
@@ -127,12 +127,12 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
   const initials = displayName.charAt(0).toUpperCase();
 
   return (
-    <div className="flex h-full w-70 flex-col border-l border-slate-800 bg-slate-900">
+    <div className="flex h-full w-70 flex-col border-l border-gray-200 bg-gray-50">
       <ScrollArea className="flex-1">
         <div className="p-4">
           {/* Contact Info */}
           <div className="flex flex-col items-center text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-700 text-lg font-semibold text-white">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 text-lg font-semibold text-gray-900">
               {contact.avatar_url ? (
                 <img
                   src={contact.avatar_url}
@@ -143,11 +143,11 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
                 initials
               )}
             </div>
-            <h3 className="mt-3 text-sm font-semibold text-white">
+            <h3 className="mt-3 text-sm font-semibold text-gray-900">
               {displayName}
             </h3>
             {contact.company && (
-              <p className="text-xs text-slate-400">{contact.company}</p>
+              <p className="text-xs text-gray-500">{contact.company}</p>
             )}
           </div>
 
@@ -155,37 +155,37 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
           <div className="mt-4 space-y-2">
             <button
               onClick={handleCopyPhone}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 transition-colors hover:bg-slate-800"
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50"
             >
-              <Phone className="h-4 w-4 text-slate-500" />
+              <Phone className="h-4 w-4 text-gray-400" />
               <span className="flex-1 text-left">{contact.phone}</span>
               {copied ? (
                 <Check className="h-3 w-3 text-primary" />
               ) : (
-                <Copy className="h-3 w-3 text-slate-600" />
+                <Copy className="h-3 w-3 text-gray-400" />
               )}
             </button>
 
             {contact.email && (
-              <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300">
-                <Mail className="h-4 w-4 text-slate-500" />
+              <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700">
+                <Mail className="h-4 w-4 text-gray-400" />
                 <span className="truncate">{contact.email}</span>
               </div>
             )}
           </div>
 
           {/* Divider */}
-          <div className="my-4 border-t border-slate-800" />
+          <div className="my-4 border-t border-gray-200" />
 
           {/* Tags */}
           <div>
-            <div className="flex items-center gap-2 px-1 text-xs font-medium uppercase tracking-wider text-slate-500">
+            <div className="flex items-center gap-2 px-1 text-xs font-medium uppercase tracking-wider text-gray-400">
               <TagIcon className="h-3 w-3" />
               Tags
             </div>
             <div className="mt-2 flex flex-wrap gap-1">
               {tags.length === 0 ? (
-                <p className="px-1 text-xs text-slate-600">No tags</p>
+                <p className="px-1 text-xs text-gray-400">No tags</p>
               ) : (
                 tags.map((tag) => (
                   <span
@@ -204,27 +204,27 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
           </div>
 
           {/* Divider */}
-          <div className="my-4 border-t border-slate-800" />
+          <div className="my-4 border-t border-gray-200" />
 
           {/* Active Deals */}
           <div>
-            <div className="flex items-center gap-2 px-1 text-xs font-medium uppercase tracking-wider text-slate-500">
+            <div className="flex items-center gap-2 px-1 text-xs font-medium uppercase tracking-wider text-gray-400">
               <DollarSign className="h-3 w-3" />
               Active Deals
             </div>
             <div className="mt-2 space-y-2">
               {deals.length === 0 ? (
-                <p className="px-1 text-xs text-slate-600">No deals</p>
+                <p className="px-1 text-xs text-gray-400">No deals</p>
               ) : (
                 deals.map((deal) => (
                   <div
                     key={deal.id}
-                    className="rounded-lg bg-slate-800 px-3 py-2"
+                    className="rounded-lg bg-white px-3 py-2"
                   >
-                    <p className="text-sm font-medium text-white">
+                    <p className="text-sm font-medium text-gray-900">
                       {deal.title}
                     </p>
-                    <div className="mt-1 flex items-center justify-between text-xs text-slate-400">
+                    <div className="mt-1 flex items-center justify-between text-xs text-gray-500">
                       <span>
                         {deal.currency ?? "$"}
                         {deal.value.toLocaleString()}
@@ -248,11 +248,11 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
           </div>
 
           {/* Divider */}
-          <div className="my-4 border-t border-slate-800" />
+          <div className="my-4 border-t border-gray-200" />
 
           {/* Notes */}
           <div>
-            <div className="flex items-center gap-2 px-1 text-xs font-medium uppercase tracking-wider text-slate-500">
+            <div className="flex items-center gap-2 px-1 text-xs font-medium uppercase tracking-wider text-gray-400">
               <StickyNote className="h-3 w-3" />
               Notes
             </div>
@@ -263,7 +263,7 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
                   onChange={(e) => setNewNote(e.target.value)}
                   placeholder="Add a note..."
                   rows={2}
-                  className="flex-1 resize-none rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs text-white placeholder-slate-500 outline-none focus:border-primary/50"
+                  className="flex-1 resize-none rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs text-gray-900 placeholder-gray-400 outline-none focus:border-primary/50"
                 />
                 <Button
                   size="sm"
@@ -279,12 +279,12 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
                 {notes.map((note) => (
                   <div
                     key={note.id}
-                    className="rounded-lg bg-slate-800 px-3 py-2"
+                    className="rounded-lg bg-white px-3 py-2"
                   >
-                    <p className="whitespace-pre-wrap text-xs text-slate-300">
+                    <p className="whitespace-pre-wrap text-xs text-gray-700">
                       {note.note_text}
                     </p>
-                    <p className="mt-1 text-[10px] text-slate-600">
+                    <p className="mt-1 text-[10px] text-gray-400">
                       {format(new Date(note.created_at), "MMM d, yyyy HH:mm")}
                     </p>
                   </div>

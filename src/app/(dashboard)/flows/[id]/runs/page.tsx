@@ -63,32 +63,32 @@ const STATUS_META: Record<
 > = {
   active: {
     label: "Active",
-    classes: "border-emerald-600/40 bg-emerald-500/10 text-emerald-300",
+    classes: "border-emerald-600/40 bg-emerald-500/10 text-emerald-700",
     icon: PlayCircle,
   },
   completed: {
     label: "Completed",
-    classes: "border-slate-700 bg-slate-800 text-slate-300",
+    classes: "border-gray-200 bg-white text-gray-700",
     icon: CircleCheck,
   },
   handed_off: {
     label: "Handed off",
-    classes: "border-amber-600/40 bg-amber-500/10 text-amber-300",
+    classes: "border-amber-600/40 bg-amber-500/10 text-amber-700",
     icon: UserPlus,
   },
   timed_out: {
     label: "Timed out",
-    classes: "border-slate-700 bg-slate-800/60 text-slate-400",
+    classes: "border-gray-200 bg-gray-50 text-gray-500",
     icon: Clock,
   },
   paused_by_agent: {
     label: "Paused by agent",
-    classes: "border-slate-700 bg-slate-800 text-slate-300",
+    classes: "border-gray-200 bg-white text-gray-700",
     icon: PauseCircle,
   },
   failed: {
     label: "Failed",
-    classes: "border-red-600/40 bg-red-500/10 text-red-300",
+    classes: "border-red-600/40 bg-red-500/10 text-red-700",
     icon: CircleAlert,
   },
 };
@@ -151,14 +151,14 @@ export default function FlowRunsPage() {
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-slate-500" />
+        <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
       </div>
     );
   }
   if (notFound || !flow) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-3">
-        <p className="text-sm text-slate-400">Flow not found.</p>
+        <p className="text-sm text-gray-500">Flow not found.</p>
         <button
           type="button"
           onClick={() => router.push("/flows")}
@@ -175,19 +175,19 @@ export default function FlowRunsPage() {
       <button
         type="button"
         onClick={() => router.push(`/flows/${flow.id}`)}
-        className="mb-2 inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300"
+        className="mb-2 inline-flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700"
       >
         <ArrowLeft className="h-3 w-3" />
         {flow.name}
       </button>
-      <h1 className="text-xl font-semibold text-white">Runs</h1>
-      <p className="mt-1 text-sm text-slate-400">
+      <h1 className="text-xl font-semibold text-gray-900">Runs</h1>
+      <p className="mt-1 text-sm text-gray-500">
         The 50 most recent times this flow ran. Expand a row to see the engine&apos;s
         per-step log.
       </p>
 
       {runs.length === 0 ? (
-        <div className="mt-6 rounded-lg border border-dashed border-slate-700 bg-slate-900/50 px-6 py-12 text-center text-sm text-slate-400">
+        <div className="mt-6 rounded-lg border border-dashed border-gray-200 bg-gray-50 px-6 py-12 text-center text-sm text-gray-500">
           No runs yet. Trigger the flow from a personal WhatsApp number to see
           it appear here.
         </div>
@@ -229,20 +229,20 @@ function RunCard({
       })
     : null;
   return (
-    <div className="rounded-lg border border-slate-800 bg-slate-900">
+    <div className="rounded-lg border border-gray-200 bg-gray-50">
       <button
         type="button"
         onClick={onToggle}
         className="flex w-full items-center gap-3 px-4 py-3 text-left"
       >
         {expanded ? (
-          <ChevronDown className="h-4 w-4 shrink-0 text-slate-500" />
+          <ChevronDown className="h-4 w-4 shrink-0 text-gray-400" />
         ) : (
-          <ChevronRight className="h-4 w-4 shrink-0 text-slate-500" />
+          <ChevronRight className="h-4 w-4 shrink-0 text-gray-400" />
         )}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="truncate text-sm font-medium text-white">
+            <span className="truncate text-sm font-medium text-gray-900">
               {contactLabel}
             </span>
             <Badge variant="outline" className={cn("gap-1", meta.classes)}>
@@ -250,12 +250,12 @@ function RunCard({
               {meta.label}
             </Badge>
             {run.status === "active" && run.current_node_key && (
-              <code className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-400">
+              <code className="rounded bg-white px-1.5 py-0.5 text-[10px] text-gray-500">
                 at {run.current_node_key}
               </code>
             )}
           </div>
-          <div className="mt-0.5 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+          <div className="mt-0.5 flex flex-wrap items-center gap-2 text-[11px] text-gray-400">
             <span>Started {format(new Date(run.started_at), "PP p")}</span>
             {run.reprompt_count > 0 && (
               <span>· {run.reprompt_count} re-prompts</span>
@@ -265,20 +265,20 @@ function RunCard({
         </div>
       </button>
       {expanded && (
-        <div className="border-t border-slate-800 px-4 py-3">
+        <div className="border-t border-gray-200 px-4 py-3">
           {Object.keys(run.vars).length > 0 && (
             <details className="mb-3">
-              <summary className="cursor-pointer text-xs text-slate-400">
+              <summary className="cursor-pointer text-xs text-gray-500">
                 Captured vars ({Object.keys(run.vars).length})
               </summary>
-              <pre className="mt-2 overflow-x-auto rounded-md bg-slate-950 p-2 text-[11px] text-slate-300">
+              <pre className="mt-2 overflow-x-auto rounded-md bg-gray-100 p-2 text-[11px] text-gray-700">
                 {JSON.stringify(run.vars, null, 2)}
               </pre>
             </details>
           )}
           <div className="flex flex-col gap-1">
             {events.length === 0 ? (
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-gray-400">
                 No events recorded for this run.
               </p>
             ) : (
@@ -292,34 +292,34 @@ function RunCard({
 }
 
 const EVENT_COLOR: Record<string, string> = {
-  started: "text-emerald-300",
-  node_entered: "text-slate-300",
-  message_sent: "text-sky-300",
+  started: "text-emerald-700",
+  node_entered: "text-gray-700",
+  message_sent: "text-sky-700",
   reply_received: "text-primary",
-  fallback_fired: "text-amber-300",
-  handoff: "text-amber-300",
-  timeout: "text-slate-500",
-  error: "text-red-300",
-  completed: "text-emerald-300",
+  fallback_fired: "text-amber-700",
+  handoff: "text-amber-700",
+  timeout: "text-gray-400",
+  error: "text-red-700",
+  completed: "text-emerald-700",
 };
 
 function EventLine({ ev }: { ev: EventRow }) {
-  const cls = EVENT_COLOR[ev.event_type] ?? "text-slate-400";
+  const cls = EVENT_COLOR[ev.event_type] ?? "text-gray-500";
   return (
     <div className="flex items-start gap-2 rounded-md px-2 py-1 text-xs">
-      <span className="w-32 shrink-0 text-[10px] text-slate-500">
+      <span className="w-32 shrink-0 text-[10px] text-gray-400">
         {format(new Date(ev.created_at), "HH:mm:ss")}
       </span>
       <span className={cn("w-32 shrink-0 font-mono text-[10px]", cls)}>
         {ev.event_type}
       </span>
       {ev.node_key && (
-        <code className="shrink-0 rounded bg-slate-800 px-1 py-0.5 text-[10px] text-slate-400">
+        <code className="shrink-0 rounded bg-white px-1 py-0.5 text-[10px] text-gray-500">
           {ev.node_key}
         </code>
       )}
       {Object.keys(ev.payload).length > 0 && (
-        <span className="min-w-0 truncate text-[10px] text-slate-500">
+        <span className="min-w-0 truncate text-[10px] text-gray-400">
           {summarizePayload(ev.payload)}
         </span>
       )}

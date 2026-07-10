@@ -299,12 +299,12 @@ export default function PipelinesPage() {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <div className="h-8 w-48 animate-pulse rounded bg-slate-800" />
-          <div className="h-9 w-28 animate-pulse rounded-lg bg-slate-800" />
+          <div className="h-8 w-48 animate-pulse rounded bg-white" />
+          <div className="h-9 w-28 animate-pulse rounded-lg bg-white" />
         </div>
         <div className="flex gap-3">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-96 w-72 animate-pulse rounded-xl bg-slate-800/50" />
+            <div key={i} className="h-96 w-72 animate-pulse rounded-xl bg-gray-50" />
           ))}
         </div>
       </div>
@@ -319,20 +319,20 @@ export default function PipelinesPage() {
           {/* Pipeline selector dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white hover:bg-slate-800 transition-colors data-[popup-open]:bg-slate-800"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 hover:bg-gray-50 transition-colors data-[popup-open]:bg-white"
             >
               <GitBranch className="h-4 w-4 text-primary" />
               <span className="font-semibold">
                 {selectedPipeline?.name ?? "Select Pipeline"}
               </span>
-              <ChevronDown className="h-4 w-4 text-slate-400" />
+              <ChevronDown className="h-4 w-4 text-gray-500" />
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="start"
-              className="w-64 border-slate-700 bg-slate-900 text-slate-200"
+              className="w-64 border-gray-200 bg-gray-50 text-gray-800"
             >
               {pipelines.length === 0 && (
-                <DropdownMenuItem disabled className="text-slate-500">
+                <DropdownMenuItem disabled className="text-gray-400">
                   No pipelines yet
                 </DropdownMenuItem>
               )}
@@ -343,18 +343,18 @@ export default function PipelinesPage() {
                   className={
                     p.id === selectedPipelineId
                       ? "text-primary"
-                      : "text-slate-300"
+                      : "text-gray-700"
                   }
                 >
                   <GitBranch className="mr-2 h-3.5 w-3.5" />
                   {p.name}
                 </DropdownMenuItem>
               ))}
-              <DropdownMenuSeparator className="bg-slate-700" />
+              <DropdownMenuSeparator className="bg-gray-100" />
               {selectedPipeline && (
                 <DropdownMenuItem
                   onClick={() => setSettingsOpen(true)}
-                  className="text-slate-300"
+                  className="text-gray-700"
                 >
                   <Settings className="mr-2 h-3.5 w-3.5" />
                   Manage Pipelines
@@ -370,7 +370,7 @@ export default function PipelinesPage() {
             canAct={canEditSettings}
             gateReason="create pipelines"
             onClick={() => setNewPipelineOpen(true)}
-            className="border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800"
+            className="border-gray-200 bg-gray-50 text-gray-800 hover:bg-gray-50"
           >
             <Plus className="mr-1 h-4 w-4" />
             Add Pipeline
@@ -390,12 +390,12 @@ export default function PipelinesPage() {
 
       {/* Board */}
       {pipelines.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-700 py-20">
-          <GitBranch className="h-12 w-12 text-slate-600" />
-          <h3 className="mt-4 text-lg font-medium text-white">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 py-20">
+          <GitBranch className="h-12 w-12 text-gray-400" />
+          <h3 className="mt-4 text-lg font-medium text-gray-900">
             No pipelines yet
           </h3>
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-gray-500">
             Create a pipeline to start tracking deals
           </p>
           <GatedButton
@@ -423,30 +423,30 @@ export default function PipelinesPage() {
 
       {/* New Pipeline Dialog */}
       <Dialog open={newPipelineOpen} onOpenChange={setNewPipelineOpen}>
-        <DialogContent className="sm:max-w-sm bg-slate-900 border-slate-700">
+        <DialogContent className="sm:max-w-sm bg-gray-50 border-gray-200">
           <DialogHeader>
-            <DialogTitle className="text-white">New Pipeline</DialogTitle>
+            <DialogTitle className="text-gray-900">New Pipeline</DialogTitle>
           </DialogHeader>
           <div className="py-2">
-            <Label className="text-slate-300">Pipeline Name</Label>
+            <Label className="text-gray-700">Pipeline Name</Label>
             <Input
               value={newPipelineName}
               onChange={(e) => setNewPipelineName(e.target.value)}
               placeholder="e.g., Enterprise Sales"
-              className="mt-2 bg-slate-800 border-slate-700 text-white"
+              className="mt-2 bg-white border-gray-200 text-gray-900"
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleCreatePipeline();
               }}
             />
-            <p className="mt-2 text-xs text-slate-400">
+            <p className="mt-2 text-xs text-gray-500">
               Default stages (New Lead → Won) will be created automatically.
             </p>
           </div>
-          <DialogFooter className="bg-slate-900/50 border-slate-700">
+          <DialogFooter className="bg-gray-50 border-gray-200">
             <Button
               variant="outline"
               onClick={() => setNewPipelineOpen(false)}
-              className="border-slate-700 text-slate-300 hover:bg-slate-800"
+              className="border-gray-200 text-gray-700 hover:bg-gray-50"
             >
               Cancel
             </Button>

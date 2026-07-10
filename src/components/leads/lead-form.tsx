@@ -27,7 +27,7 @@ interface LeadFormProps {
 }
 
 const selectClass =
-  "h-9 w-full rounded-lg border border-slate-700 bg-slate-800 px-2.5 text-sm text-white outline-none focus:border-primary focus:ring-1 focus:ring-primary";
+  "h-9 w-full rounded-lg border border-gray-200 bg-white px-2.5 text-sm text-gray-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary";
 
 // timestamptz → valor de <input type="datetime-local"> no fuso local
 function toLocalInput(iso: string | null): string {
@@ -162,60 +162,60 @@ export function LeadForm({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full border-slate-700 bg-slate-900 p-0 text-slate-200 sm:max-w-lg"
+        className="w-full border-gray-200 bg-gray-50 p-0 text-gray-800 sm:max-w-lg"
       >
         <div className="flex h-full flex-col">
-          <SheetHeader className="border-b border-slate-700/50 p-4">
-            <SheetTitle className="text-white">
+          <SheetHeader className="border-b border-gray-200 p-4">
+            <SheetTitle className="text-gray-900">
               {lead ? "Editar lead" : "Novo lead"}
             </SheetTitle>
           </SheetHeader>
 
           <div className="flex-1 space-y-4 overflow-y-auto p-4">
             <div className="grid gap-2">
-              <Label className="text-slate-300">Nome *</Label>
+              <Label className="text-gray-700">Nome *</Label>
               <Input
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
                 placeholder="Nome do cliente"
-                className="border-slate-700 bg-slate-800 text-white"
+                className="border-gray-200 bg-white text-gray-900"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="grid gap-2">
-                <Label className="text-slate-300">Telefone (WhatsApp)</Label>
+                <Label className="text-gray-700">Telefone (WhatsApp)</Label>
                 <Input
                   value={telefone}
                   onChange={(e) => setTelefone(e.target.value)}
                   placeholder="(54) 99999-0000"
-                  className="border-slate-700 bg-slate-800 text-white"
+                  className="border-gray-200 bg-white text-gray-900"
                 />
               </div>
               <div className="grid gap-2">
-                <Label className="text-slate-300">E-mail</Label>
+                <Label className="text-gray-700">E-mail</Label>
                 <Input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="cliente@email.com"
-                  className="border-slate-700 bg-slate-800 text-white"
+                  className="border-gray-200 bg-white text-gray-900"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="grid gap-2">
-                <Label className="text-slate-300">Imóvel de interesse</Label>
+                <Label className="text-gray-700">Imóvel de interesse</Label>
                 <Input
                   value={imovel}
                   onChange={(e) => setImovel(e.target.value)}
                   placeholder="Joaquim 101"
-                  className="border-slate-700 bg-slate-800 text-white"
+                  className="border-gray-200 bg-white text-gray-900"
                 />
               </div>
               <div className="grid gap-2">
-                <Label className="text-slate-300">Origem</Label>
+                <Label className="text-gray-700">Origem</Label>
                 <select
                   value={origem}
                   onChange={(e) => setOrigem(e.target.value)}
@@ -232,7 +232,7 @@ export function LeadForm({
             </div>
 
             <div className="grid gap-2">
-              <Label className="text-slate-300">
+              <Label className="text-gray-700">
                 Temperatura do lead — {score}%
               </Label>
               <div className="flex gap-2">
@@ -248,7 +248,7 @@ export function LeadForm({
                         className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg border py-2 text-xs font-semibold transition-colors ${
                           ativo
                             ? `${meta.pill} border-current`
-                            : "border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-600"
+                            : "border-gray-200 bg-white text-gray-500 hover:border-gray-400"
                         }`}
                       >
                         {t === "frio" ? (
@@ -275,7 +275,7 @@ export function LeadForm({
 
             <div className="grid grid-cols-2 gap-3">
               <div className="grid gap-2">
-                <Label className="text-slate-300">Etapa</Label>
+                <Label className="text-gray-700">Etapa</Label>
                 <select
                   value={etapa}
                   onChange={(e) => setEtapa(e.target.value as LeadEtapa)}
@@ -289,28 +289,28 @@ export function LeadForm({
                 </select>
               </div>
               <div className="grid gap-2">
-                <Label className="text-slate-300">Visita agendada</Label>
+                <Label className="text-gray-700">Visita agendada</Label>
                 <Input
                   type="datetime-local"
                   value={dataVisita}
                   onChange={(e) => setDataVisita(e.target.value)}
-                  className="border-slate-700 bg-slate-800 text-white [color-scheme:dark]"
+                  className="border-gray-200 bg-white text-gray-900 [color-scheme:dark]"
                 />
               </div>
             </div>
 
             <div className="grid gap-2">
-              <Label className="text-slate-300">Notas</Label>
+              <Label className="text-gray-700">Notas</Label>
               <Textarea
                 value={notas}
                 onChange={(e) => setNotas(e.target.value)}
                 placeholder="Observações sobre o lead..."
-                className="min-h-20 border-slate-700 bg-slate-800 text-white"
+                className="min-h-20 border-gray-200 bg-white text-gray-900"
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-2 border-t border-slate-700/50 p-4">
+          <div className="flex items-center justify-between gap-2 border-t border-gray-200 p-4">
             {lead ? (
               confirmDelete ? (
                 <div className="flex items-center gap-2">
@@ -330,7 +330,7 @@ export function LeadForm({
                     variant="ghost"
                     size="sm"
                     onClick={() => setConfirmDelete(false)}
-                    className="text-slate-400"
+                    className="text-gray-500"
                   >
                     Cancelar
                   </Button>
@@ -340,7 +340,7 @@ export function LeadForm({
                   variant="ghost"
                   size="sm"
                   onClick={() => setConfirmDelete(true)}
-                  className="text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                  className="text-red-600 hover:bg-red-500/10 hover:text-red-700"
                 >
                   <Trash2 className="mr-1 h-3.5 w-3.5" />
                   Excluir
@@ -353,7 +353,7 @@ export function LeadForm({
               <Button
                 variant="ghost"
                 onClick={() => onOpenChange(false)}
-                className="text-slate-400"
+                className="text-gray-500"
               >
                 Cancelar
               </Button>

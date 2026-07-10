@@ -22,12 +22,12 @@ export function LeadAgenda({ leads, onEditLead }: LeadAgendaProps) {
 
   if (comVisita.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-slate-800 bg-slate-900/60 py-16 text-center">
-        <CalendarDays className="mb-3 h-8 w-8 text-slate-600" />
-        <p className="text-sm font-medium text-slate-300">
+      <div className="flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-gray-50/80 py-16 text-center">
+        <CalendarDays className="mb-3 h-8 w-8 text-gray-400" />
+        <p className="text-sm font-medium text-gray-700">
           Nenhuma visita agendada
         </p>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="mt-1 text-xs text-gray-400">
           Defina a data da visita no cadastro do lead para vê-la aqui.
         </p>
       </div>
@@ -49,7 +49,7 @@ export function LeadAgenda({ leads, onEditLead }: LeadAgendaProps) {
     <div className="space-y-6">
       {[...porDia.entries()].map(([dia, doDia]) => (
         <div key={dia}>
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400 first-letter:uppercase">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 first-letter:uppercase">
             {dia}
           </h3>
           <div className="space-y-2">
@@ -72,9 +72,9 @@ export function LeadAgenda({ leads, onEditLead }: LeadAgendaProps) {
                       onEditLead(lead);
                     }
                   }}
-                  className="flex cursor-pointer items-center gap-4 rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3 transition-colors hover:border-slate-700 hover:bg-slate-900"
+                  className="flex cursor-pointer items-center gap-4 rounded-xl border border-gray-200 bg-gray-50/80 px-4 py-3 transition-colors hover:border-gray-300 hover:bg-gray-100"
                 >
-                  <span className="w-12 shrink-0 text-sm font-bold text-white">
+                  <span className="w-12 shrink-0 text-sm font-bold text-gray-900">
                     {hora}
                   </span>
                   <span
@@ -83,10 +83,10 @@ export function LeadAgenda({ leads, onEditLead }: LeadAgendaProps) {
                     style={{ backgroundColor: etapa?.color ?? "#94a3b8" }}
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-white">
+                    <p className="truncate text-sm font-semibold text-gray-900">
                       {lead.nome}
                     </p>
-                    <p className="flex items-center gap-1.5 text-xs text-slate-400">
+                    <p className="flex items-center gap-1.5 text-xs text-gray-500">
                       {lead.imovel && (
                         <>
                           <Building2 className="h-3 w-3" />
@@ -98,7 +98,7 @@ export function LeadAgenda({ leads, onEditLead }: LeadAgendaProps) {
                       )}
                     </p>
                   </div>
-                  <span className="hidden shrink-0 rounded-full bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-slate-300 sm:inline">
+                  <span className="hidden shrink-0 rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-gray-700 sm:inline">
                     {etapa?.label}
                   </span>
                   {wa && (
@@ -112,7 +112,7 @@ export function LeadAgenda({ leads, onEditLead }: LeadAgendaProps) {
                         void openWhatsApp(lead.telefone, wa);
                       }}
                       title="Abrir conversa"
-                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-700 text-emerald-500 transition-colors hover:border-emerald-500 hover:bg-emerald-500/10"
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gray-200 text-emerald-500 transition-colors hover:border-emerald-500 hover:bg-emerald-500/10"
                     >
                       <MessageCircle className="h-4 w-4" />
                     </a>

@@ -43,18 +43,18 @@ export default function ForgotPasswordPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
-        <Card className="w-full max-w-md border-slate-800 bg-slate-900">
+      <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
+        <Card className="w-full max-w-md border-gray-200 bg-gray-50">
           <CardHeader className="items-center text-center">
             <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
               <CheckCircle className="h-6 w-6 text-primary" />
             </div>
-            <CardTitle className="text-xl text-white">
+            <CardTitle className="text-xl text-gray-900">
               Check your email
             </CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardDescription className="text-gray-500">
               We&apos;ve sent a password reset link to{" "}
-              <span className="text-white">{email}</span>. Please check your
+              <span className="text-gray-900">{email}</span>. Please check your
               inbox.
             </CardDescription>
           </CardHeader>
@@ -62,7 +62,7 @@ export default function ForgotPasswordPage() {
             <Link href="/login">
               <Button
                 variant="outline"
-                className="w-full border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white"
+                className="w-full border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
               >
                 Back to sign in
               </Button>
@@ -74,27 +74,27 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
-      <Card className="w-full max-w-md border-slate-800 bg-slate-900">
+    <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
+      <Card className="w-full max-w-md border-gray-200 bg-gray-50">
         <CardHeader className="items-center text-center">
           <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
             <MessageSquare className="h-6 w-6 text-primary" />
           </div>
-          <CardTitle className="text-xl text-white">Reset password</CardTitle>
-          <CardDescription className="text-slate-400">
+          <CardTitle className="text-xl text-gray-900">Reset password</CardTitle>
+          <CardDescription className="text-gray-500">
             Enter your email and we&apos;ll send you a reset link
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleReset} className="flex flex-col gap-4">
             {error && (
-              <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+              <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-600">
                 {error}
               </div>
             )}
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="text-slate-300">
+              <Label htmlFor="email" className="text-gray-700">
                 Email
               </Label>
               <Input
@@ -104,7 +104,7 @@ export default function ForgotPasswordPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-slate-700 bg-slate-800 text-white placeholder:text-slate-500 focus-visible:border-primary focus-visible:ring-primary/20"
+                className="border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 focus-visible:border-primary focus-visible:ring-primary/20"
               />
             </div>
 
@@ -119,7 +119,7 @@ export default function ForgotPasswordPage() {
 
           <Link
             href="/login"
-            className="mt-6 flex items-center justify-center gap-2 text-sm text-slate-400 hover:text-slate-300"
+            className="mt-6 flex items-center justify-center gap-2 text-sm text-gray-500 hover:text-gray-700"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to sign in

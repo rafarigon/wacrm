@@ -25,7 +25,7 @@ describe("getBroadcastStatus", () => {
     expect(getBroadcastStatus("")).toBe(broadcastStatusConfig.draft);
   });
 
-  it("each variant has the dark-theme class triple", () => {
+  it("each variant has the theme class triple", () => {
     // Accept both fixed-shade Tailwind names (bg-red-500/10) and
     // token-backed names without a shade number (bg-primary/10) since
     // the brand-accent statuses now ride the active color theme.

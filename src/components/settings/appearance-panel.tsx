@@ -23,8 +23,8 @@ export function AppearancePanel() {
   return (
     <section className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-white">Color theme</h2>
-        <p className="mt-1 text-sm text-slate-400">
+        <h2 className="text-lg font-semibold text-gray-900">Color theme</h2>
+        <p className="mt-1 text-sm text-gray-500">
           Pick the accent color used across the app. All themes stay
           dark — only the primary color (buttons, active nav, badges)
           changes. Saved to this device.
@@ -73,7 +73,7 @@ function ThemeCard({
         "flex flex-col gap-3 rounded-lg border bg-card p-4 text-left transition-colors",
         isActive
           ? "border-primary/60 ring-2 ring-primary/40"
-          : "border-slate-800 hover:border-slate-700 hover:bg-slate-800/40",
+          : "border-gray-200 hover:border-gray-300 hover:bg-gray-50",
       )}
     >
       <div className="flex items-center justify-between">
@@ -93,8 +93,8 @@ function ThemeCard({
         )}
       </div>
       <div>
-        <div className="text-sm font-semibold text-white">{name}</div>
-        <div className="mt-1 text-xs leading-relaxed text-slate-400">
+        <div className="text-sm font-semibold text-gray-900">{name}</div>
+        <div className="mt-1 text-xs leading-relaxed text-gray-500">
           {tagline}
         </div>
       </div>
@@ -103,9 +103,9 @@ function ThemeCard({
         aria-hidden
       >
         <span className="flex-1" style={{ background: swatch }} />
-        <span className="w-3 bg-slate-700" />
-        <span className="w-3 bg-slate-800" />
-        <span className="w-3 bg-slate-900" />
+        <span className="w-3 bg-gray-100" />
+        <span className="w-3 bg-white" />
+        <span className="w-3 bg-gray-50" />
       </div>
       <span className="sr-only">Theme id: {id}</span>
     </button>

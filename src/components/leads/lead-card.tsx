@@ -49,10 +49,10 @@ export function LeadCard({ lead, onEdit, isOverlay }: LeadCardProps) {
           onEdit(lead);
         }
       }}
-      className={`group relative w-full cursor-pointer rounded-xl border bg-slate-800/70 p-3 text-left shadow-sm transition-all ${tempMeta.border} ${
+      className={`group relative w-full cursor-pointer rounded-xl border bg-white p-3 text-left shadow-sm transition-all ${tempMeta.border} ${
         isOverlay
           ? "shadow-xl"
-          : "hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-lg"
+          : "hover:-translate-y-0.5 hover:bg-gray-50 hover:shadow-lg"
       }`}
     >
       <span
@@ -62,7 +62,7 @@ export function LeadCard({ lead, onEdit, isOverlay }: LeadCardProps) {
       />
 
       <div className="flex items-start justify-between gap-2 pl-1">
-        <h4 className="flex-1 truncate text-sm font-semibold text-white">
+        <h4 className="flex-1 truncate text-sm font-semibold text-gray-900">
           {lead.nome}
         </h4>
         <span
@@ -77,7 +77,7 @@ export function LeadCard({ lead, onEdit, isOverlay }: LeadCardProps) {
           {lead.score}%
         </span>
         {lead.notas && (
-          <StickyNote className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" />
+          <StickyNote className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gray-400" />
         )}
       </div>
 
@@ -91,10 +91,10 @@ export function LeadCard({ lead, onEdit, isOverlay }: LeadCardProps) {
             e.preventDefault();
             void openWhatsApp(lead.telefone, wa);
           }}
-          className="mt-2 flex items-center gap-2 pl-1 text-xs text-slate-300 hover:text-primary"
+          className="mt-2 flex items-center gap-2 pl-1 text-xs text-gray-700 hover:text-primary"
           title="Abrir conversa"
         >
-          <Phone className="h-3 w-3 shrink-0 text-slate-500" />
+          <Phone className="h-3 w-3 shrink-0 text-gray-400" />
           <span className="truncate">{lead.telefone}</span>
         </a>
       )}
@@ -103,24 +103,24 @@ export function LeadCard({ lead, onEdit, isOverlay }: LeadCardProps) {
         <a
           href={`mailto:${lead.email}`}
           onClick={(e) => e.stopPropagation()}
-          className="mt-1.5 flex items-center gap-2 pl-1 text-xs text-slate-300 hover:text-primary"
+          className="mt-1.5 flex items-center gap-2 pl-1 text-xs text-gray-700 hover:text-primary"
           title="Enviar e-mail"
         >
-          <Mail className="h-3 w-3 shrink-0 text-slate-500" />
+          <Mail className="h-3 w-3 shrink-0 text-gray-400" />
           <span className="truncate">{lead.email}</span>
         </a>
       )}
 
       <div className="mt-2 flex items-center justify-between gap-2 pl-1">
         {lead.imovel ? (
-          <span className="flex min-w-0 items-center gap-1.5 text-[11px] uppercase tracking-wide text-slate-400">
+          <span className="flex min-w-0 items-center gap-1.5 text-[11px] uppercase tracking-wide text-gray-500">
             <Building2 className="h-3 w-3 shrink-0" />
             <span className="truncate">{lead.imovel}</span>
           </span>
         ) : (
           <span />
         )}
-        <span className="flex shrink-0 items-center gap-1 text-[11px] text-slate-500">
+        <span className="flex shrink-0 items-center gap-1 text-[11px] text-gray-400">
           <Calendar className="h-3 w-3" />
           {fmtDataCurta(lead.data_visita ?? lead.created_at)}
         </span>
@@ -129,7 +129,7 @@ export function LeadCard({ lead, onEdit, isOverlay }: LeadCardProps) {
       {lead.corretor_nome && (
         <div
           title={`Lead do Portal do Corretor — ${lead.corretor_nome}`}
-          className="mt-2 flex items-center gap-1.5 pl-1 text-[10.5px] text-slate-500"
+          className="mt-2 flex items-center gap-1.5 pl-1 text-[10.5px] text-gray-400"
         >
           <Handshake className="h-3 w-3 shrink-0" />
           <span className="truncate">via {lead.corretor_nome}</span>
@@ -146,7 +146,7 @@ export function LeadCard({ lead, onEdit, isOverlay }: LeadCardProps) {
             e.preventDefault();
             void openWhatsApp(lead.telefone, wa);
           }}
-          className="mt-3 flex items-center justify-center gap-2 rounded-full border border-slate-600 py-1.5 text-xs font-medium text-slate-200 transition-colors hover:border-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-400"
+          className="mt-3 flex items-center justify-center gap-2 rounded-full border border-gray-300 py-1.5 text-xs font-medium text-gray-800 transition-colors hover:border-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-600"
         >
           <MessageCircle className="h-3.5 w-3.5 text-emerald-500" />
           WhatsApp
