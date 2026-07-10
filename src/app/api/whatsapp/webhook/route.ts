@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, after } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { decrypt, encrypt, isLegacyFormat } from '@/lib/whatsapp/encryption'
 import { verifyMetaWebhookSignature } from '@/lib/whatsapp/webhook-signature'
@@ -130,10 +130,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  // Process asynchronously so we can ack Meta within their timeout.
-  processWebhook(body).catch((error) => {
-    console.error('Error processing webhook:', error)
-  })
+  // Process after the ack so we stay inside Meta's timeout. after() (not
+  // fire-and-forget) — on Vercel the serverless instance freezes as soon
+  // as the response is sent, killing detached promises.
+  after(() =>
+    processWebhook(body).catch((error) => {
+      console.error('Error processing webhook:', error)
+    }),
+  )
 
   return NextResponse.json({ status: 'received' }, { status: 200 })
 }
