@@ -6,6 +6,7 @@ import {
 import {
   sendTextMessage as wahaSendText,
   sendMediaMessage as wahaSendMedia,
+  sendVoiceMessage as wahaSendVoice,
 } from '@/lib/whatsapp/waha-api'
 
 /**
@@ -114,6 +115,44 @@ export async function sendProviderMedia(
     link,
     caption,
     filename,
+    contextMessageId,
+  })
+}
+
+export interface ProviderSendVoiceArgs {
+  config: ProviderConfigRow
+  accessToken: string
+  to: string
+  /** Public URL the provider fetches at send time. */
+  link: string
+  contextMessageId?: string
+}
+
+/**
+ * Send a voice note (PTT). WAHA-only for now — the Meta Cloud API can
+ * send audio too, but the inbox voice-note feature ships against WAHA;
+ * a Meta config falls back to a plain audio document send.
+ */
+export async function sendProviderVoice(
+  args: ProviderSendVoiceArgs,
+): Promise<{ messageId: string }> {
+  const { config, accessToken, to, link, contextMessageId } = args
+  if (isWahaConfig(config)) {
+    return wahaSendVoice({
+      ...wahaConnection(config, accessToken),
+      to,
+      link,
+      contextMessageId,
+    })
+  }
+  // Meta: no PTT helper — send as an audio file via the media path.
+  return metaSendMedia({
+    phoneNumberId: config.phone_number_id,
+    accessToken,
+    to,
+    kind: 'document',
+    link,
+    filename: 'audio.ogg',
     contextMessageId,
   })
 }
