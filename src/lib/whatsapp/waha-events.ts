@@ -255,34 +255,54 @@ export function translateWahaEvent(event: WahaWebhookEvent): WahaTranslation {
   }
 
   // Media — WAHA has already downloaded it and serves it from its own
-  // /api/files URL, so it goes on direct_media (no Meta media-id
-  // verification). message.type still drives the content_type mapping.
+  // /api/files/<session>/<file> URL (behind its API key, on its internal
+  // host). Rewrite that to our same-origin proxy so the browser can load
+  // it with the user's session. message.type still drives the
+  // content_type mapping.
   const media = payload.media as
     | { url?: unknown; mimetype?: unknown; filename?: unknown }
     | undefined
   if (media && typeof media.url === 'string' && media.url) {
-    const mime = typeof media.mimetype === 'string' ? media.mimetype : ''
-    const type =
-      mime.startsWith('image/') ? 'image'
-      : mime.startsWith('video/') ? 'video'
-      : mime.startsWith('audio/') ? 'audio'
-      : 'document'
-    return {
-      kind: 'message',
-      contact,
-      message: {
-        ...base,
-        type,
-        text: undefined,
-        direct_media: {
-          url: media.url,
-          mime_type: mime,
-          caption: typeof payload.body === 'string' && payload.body ? payload.body : undefined,
-          filename: typeof media.filename === 'string' ? media.filename : undefined,
+    const proxied = wahaMediaProxyUrl(media.url)
+    if (proxied) {
+      const mime = typeof media.mimetype === 'string' ? media.mimetype : ''
+      const type =
+        mime.startsWith('image/') ? 'image'
+        : mime.startsWith('video/') ? 'video'
+        : mime.startsWith('audio/') ? 'audio'
+        : 'document'
+      return {
+        kind: 'message',
+        contact,
+        message: {
+          ...base,
+          type,
+          text: undefined,
+          direct_media: {
+            url: proxied,
+            mime_type: mime,
+            caption: typeof payload.body === 'string' && payload.body ? payload.body : undefined,
+            filename: typeof media.filename === 'string' ? media.filename : undefined,
+          },
         },
-      },
+      }
     }
   }
 
   return { kind: 'message', contact, message: base }
+}
+
+/**
+ * Turn a WAHA media URL (`http://<host>/api/files/<session>/<file>`)
+ * into our same-origin proxy path (`/api/whatsapp/waha-media?f=<session>/<file>`).
+ * The proxy fetches the file from WAHA with the API key server-side.
+ * Returns null when the URL isn't a recognizable WAHA files URL.
+ */
+export function wahaMediaProxyUrl(url: string): string | null {
+  const marker = '/api/files/'
+  const i = url.indexOf(marker)
+  if (i === -1) return null
+  const rel = url.slice(i + marker.length)
+  if (!/^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/.test(rel)) return null
+  return `/api/whatsapp/waha-media?f=${rel}`
 }
