@@ -4,9 +4,23 @@ import { supabaseAdmin } from '@/lib/flows/admin-client'
 import { phonesMatch } from '@/lib/whatsapp/phone-utils'
 import {
   summarizeConversation,
+  CONTACT_CATEGORIES,
   type TranscriptLine,
+  type ConversationSummary,
+  type ContactCategory,
 } from '@/lib/ai/summarize-conversation'
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit'
+
+type ServerClient = Awaited<ReturnType<typeof createClient>>
+
+// Display name + color for each auto-applied category tag. Created on
+// first use (find-or-create), scoped to the account.
+const CATEGORY_TAG: Record<ContactCategory, { name: string; color: string }> = {
+  cliente: { name: 'Cliente', color: '#22c55e' },
+  corretor: { name: 'Corretor', color: '#3b82f6' },
+  fornecedor: { name: 'Fornecedor', color: '#f59e0b' },
+  outros: { name: 'Outros', color: '#6b7280' },
+}
 
 // A summary only needs recent context; capping bounds cost + latency.
 const MAX_MESSAGES = 300
@@ -140,9 +154,9 @@ export async function POST(request: Request) {
       )
     }
 
-    let summary: string
+    let result: ConversationSummary
     try {
-      summary = await summarizeConversation(lines)
+      result = await summarizeConversation(lines)
     } catch (err) {
       console.error(
         '[summarize] model call failed:',
@@ -153,11 +167,11 @@ export async function POST(request: Request) {
         { status: 502 },
       )
     }
-    if (!summary) {
+    if (!result.resumo) {
       return NextResponse.json({ error: 'Resumo vazio.' }, { status: 502 })
     }
 
-    const noteText = `🤖 Resumo da conversa (IA)\n\n${summary}`
+    const noteText = `🤖 Resumo da conversa (IA)\n\n${result.resumo}`
 
     // 1) Persist as a contact note — shows up in the inbox sidebar.
     const { data: note, error: noteError } = await supabase
@@ -180,9 +194,13 @@ export async function POST(request: Request) {
 
     // 2) Mirror onto the matching lead's `notas` (best-effort — a miss
     //    here must not fail the request; the contact note already landed).
-    await mirrorSummaryToLead(accountId, contact.phone, summary)
+    await mirrorSummaryToLead(accountId, contact.phone, result.resumo)
 
-    return NextResponse.json({ success: true, note })
+    // 3) Classify → apply the matching category tag (Cliente / Corretor /
+    //    Fornecedor / Outros). Mutually exclusive + best-effort.
+    await applyCategoryTag(supabase, accountId, user.id, contactId, result.tipo)
+
+    return NextResponse.json({ success: true, note, tipo: result.tipo })
   } catch (error) {
     console.error('Error in summarize POST:', error)
     return NextResponse.json(
@@ -241,6 +259,91 @@ async function mirrorSummaryToLead(
   } catch (err) {
     console.error(
       '[summarize] mirrorSummaryToLead threw:',
+      err instanceof Error ? err.message : err,
+    )
+  }
+}
+
+/**
+ * Apply the category tag inferred by the model to the contact. The four
+ * category tags are mutually exclusive — a contact is a Cliente OR a
+ * Corretor, not both — so we clear any previously-applied category tag
+ * before adding the new one. Category tags are created on first use
+ * (find-or-create, account-scoped). Best-effort: a tag failure is logged
+ * and swallowed so it never fails the summary that already saved.
+ */
+async function applyCategoryTag(
+  supabase: ServerClient,
+  accountId: string,
+  userId: string,
+  contactId: string,
+  tipo: ContactCategory,
+) {
+  try {
+    const target = CATEGORY_TAG[tipo]
+    const categoryNames = CONTACT_CATEGORIES.map((c) => CATEGORY_TAG[c].name)
+
+    // Existing category tags in this account (any of the four).
+    const { data: existing, error: fetchError } = await supabase
+      .from('tags')
+      .select('id, name')
+      .eq('account_id', accountId)
+      .in('name', categoryNames)
+    if (fetchError) {
+      console.error('[summarize] tag lookup failed:', fetchError.message)
+      return
+    }
+
+    const rows = (existing ?? []) as { id: string; name: string }[]
+    let targetId = rows.find((t) => t.name === target.name)?.id
+
+    // Create the target category tag if it doesn't exist yet.
+    if (!targetId) {
+      const { data: created, error: createError } = await supabase
+        .from('tags')
+        .insert({
+          user_id: userId,
+          account_id: accountId,
+          name: target.name,
+          color: target.color,
+        })
+        .select('id')
+        .single()
+      if (createError || !created) {
+        console.error('[summarize] tag create failed:', createError?.message)
+        return
+      }
+      targetId = created.id
+    }
+
+    // Clear the other category tags from this contact so the category is
+    // single-valued, then attach the target.
+    const otherIds = rows
+      .filter((t) => t.id !== targetId)
+      .map((t) => t.id)
+    if (otherIds.length > 0) {
+      const { error: delError } = await supabase
+        .from('contact_tags')
+        .delete()
+        .eq('contact_id', contactId)
+        .in('tag_id', otherIds)
+      if (delError) {
+        console.error('[summarize] category tag cleanup failed:', delError.message)
+      }
+    }
+
+    const { error: upsertError } = await supabase
+      .from('contact_tags')
+      .upsert(
+        { contact_id: contactId, tag_id: targetId },
+        { onConflict: 'contact_id,tag_id' },
+      )
+    if (upsertError) {
+      console.error('[summarize] tag apply failed:', upsertError.message)
+    }
+  } catch (err) {
+    console.error(
+      '[summarize] applyCategoryTag threw:',
       err instanceof Error ? err.message : err,
     )
   }

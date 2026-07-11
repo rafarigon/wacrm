@@ -136,13 +136,14 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
         alert(data.error || "Falha ao resumir a conversa.");
         return;
       }
-      if (data.note) setNotes((prev) => [data.note, ...prev]);
+      // Refresh notes AND tags — the route also applied a category tag.
+      await fetchContactData();
     } catch {
       alert("Falha ao resumir a conversa.");
     } finally {
       setSummarizing(false);
     }
-  }, [contact, summarizing]);
+  }, [contact, summarizing, fetchContactData]);
 
   if (!contact) {
     return (
