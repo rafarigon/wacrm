@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { sendTemplateMessage } from '@/lib/whatsapp/meta-api'
-import { isWahaConfig, sendProviderText } from '@/lib/whatsapp/send-provider'
+import {
+  isWahaConfig,
+  sendProviderText,
+  sendProviderMedia,
+  sendProviderVoice,
+} from '@/lib/whatsapp/send-provider'
 import { decrypt, encrypt, isLegacyFormat } from '@/lib/whatsapp/encryption'
 import { supabaseAdmin } from '@/lib/flows/admin-client'
 import {
@@ -88,6 +93,16 @@ export async function POST(request: Request) {
     if (message_type === 'template' && !template_name) {
       return NextResponse.json(
         { error: 'template_name is required for template messages' },
+        { status: 400 }
+      )
+    }
+
+    if (
+      ['image', 'video', 'document', 'audio'].includes(message_type) &&
+      !media_url
+    ) {
+      return NextResponse.json(
+        { error: 'media_url is required for media messages' },
         { status: 400 }
       )
     }
@@ -240,6 +255,7 @@ export async function POST(request: Request) {
       templateRow = data ?? null
     }
 
+    const MEDIA_KIND = { image: 'image', video: 'video', document: 'document' } as const
     const attempt = async (phone: string): Promise<string> => {
       if (message_type === 'template') {
         const result = await sendTemplateMessage({
@@ -253,6 +269,29 @@ export async function POST(request: Request) {
           // Legacy body-only fallback — only consulted when
           // messageParams.body isn't set.
           params: template_params || [],
+          contextMessageId,
+        })
+        return result.messageId
+      }
+      if (message_type === 'audio') {
+        const result = await sendProviderVoice({
+          config,
+          accessToken,
+          to: phone,
+          link: media_url,
+          contextMessageId,
+        })
+        return result.messageId
+      }
+      if (message_type in MEDIA_KIND) {
+        const result = await sendProviderMedia({
+          config,
+          accessToken,
+          to: phone,
+          kind: MEDIA_KIND[message_type as keyof typeof MEDIA_KIND],
+          link: media_url,
+          caption: content_text || undefined,
+          filename: content_text || undefined,
           contextMessageId,
         })
         return result.messageId

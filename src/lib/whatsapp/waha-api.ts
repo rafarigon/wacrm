@@ -235,6 +235,36 @@ export async function getLidPhoneNumber(
   }
 }
 
+export interface WahaSendVoiceArgs {
+  baseUrl: string
+  apiKey: string
+  session: string
+  to: string
+  /** Public URL WAHA fetches at send time. WAHA transcodes to the
+   *  OGG/Opus a WhatsApp voice note (PTT) requires. */
+  link: string
+  contextMessageId?: string
+}
+
+/**
+ * Send a voice note (PTT — push-to-talk). Renders on the recipient's
+ * phone as a WhatsApp voice message, not a plain audio file.
+ */
+export async function sendVoiceMessage(
+  args: WahaSendVoiceArgs,
+): Promise<WahaSendResult> {
+  const { baseUrl, apiKey, session, to, link, contextMessageId } = args
+  if (!link) throw new Error('sendVoiceMessage requires a link.')
+  const body: Record<string, unknown> = {
+    session,
+    chatId: await resolveChatId({ baseUrl, apiKey, session, phone: to }),
+    file: { url: link },
+  }
+  if (contextMessageId) body.reply_to = contextMessageId
+  const data = await wahaRequest({ baseUrl, apiKey, path: '/api/sendVoice', body })
+  return { messageId: extractMessageId(data) }
+}
+
 export interface WahaSetReactionArgs {
   baseUrl: string
   apiKey: string
