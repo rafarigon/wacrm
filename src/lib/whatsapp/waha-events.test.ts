@@ -4,6 +4,7 @@ import {
   mapAckToStatus,
   translateWahaEvent,
   verifyWahaWebhookSignature,
+  wahaMediaProxyUrl,
   type WahaWebhookEvent,
 } from "./waha-events";
 
@@ -81,12 +82,12 @@ describe("translateWahaEvent — inbound text", () => {
 });
 
 describe("translateWahaEvent — media", () => {
-  it("carries WAHA media on direct_media and types by mimetype", () => {
+  it("rewrites WAHA media to the same-origin proxy and types by mimetype", () => {
     const result = translateWahaEvent(
       inboundText({
         body: "Segue a foto",
         media: {
-          url: "http://waha:3000/api/files/default/x.jpg",
+          url: "http://localhost:3000/api/files/default/x.jpg",
           mimetype: "image/jpeg",
           filename: null,
         },
@@ -95,7 +96,7 @@ describe("translateWahaEvent — media", () => {
     if (result.kind !== "message") throw new Error("expected message");
     expect(result.message.type).toBe("image");
     expect(result.message.direct_media).toEqual({
-      url: "http://waha:3000/api/files/default/x.jpg",
+      url: "/api/whatsapp/waha-media?f=default/x.jpg",
       mime_type: "image/jpeg",
       caption: "Segue a foto",
       filename: undefined,
@@ -107,7 +108,7 @@ describe("translateWahaEvent — media", () => {
       inboundText({
         body: "",
         media: {
-          url: "http://waha:3000/api/files/default/tabela.pdf",
+          url: "http://localhost:3000/api/files/default/tabela.pdf",
           mimetype: "application/pdf",
           filename: "tabela.pdf",
         },
@@ -115,7 +116,39 @@ describe("translateWahaEvent — media", () => {
     );
     if (result.kind !== "message") throw new Error("expected message");
     expect(result.message.type).toBe("document");
+    expect(result.message.direct_media?.url).toBe(
+      "/api/whatsapp/waha-media?f=default/tabela.pdf",
+    );
     expect(result.message.direct_media?.filename).toBe("tabela.pdf");
+  });
+
+  it("treats media with an unparseable URL as a plain text message", () => {
+    const result = translateWahaEvent(
+      inboundText({
+        body: "oi",
+        media: { url: "https://evil.example.com/x.jpg", mimetype: "image/jpeg" },
+      }),
+    );
+    if (result.kind !== "message") throw new Error("expected message");
+    expect(result.message.type).toBe("text");
+    expect(result.message.direct_media).toBeUndefined();
+  });
+});
+
+describe("wahaMediaProxyUrl", () => {
+  it("extracts session/file from any WAHA host", () => {
+    expect(wahaMediaProxyUrl("http://localhost:3000/api/files/default/a1.jpeg")).toBe(
+      "/api/whatsapp/waha-media?f=default/a1.jpeg",
+    );
+    expect(
+      wahaMediaProxyUrl("https://waha.rr-crm.com/api/files/default/a1.jpeg"),
+    ).toBe("/api/whatsapp/waha-media?f=default/a1.jpeg");
+  });
+
+  it("rejects non-files URLs and path traversal", () => {
+    expect(wahaMediaProxyUrl("https://x.com/other/a.jpg")).toBeNull();
+    expect(wahaMediaProxyUrl("http://h/api/files/../../etc/passwd")).toBeNull();
+    expect(wahaMediaProxyUrl("http://h/api/files/default")).toBeNull();
   });
 });
 

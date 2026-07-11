@@ -61,8 +61,12 @@ function MediaImage({ url, alt }: { url: string; alt: string }) {
   const loadImage = useCallback(async () => {
     if (!url) return;
 
-    // Proxy URLs need auth fetch to create blob URL
-    if (url.startsWith("/api/whatsapp/media/")) {
+    // Proxy URLs need auth fetch to create blob URL (Meta media proxy
+    // and the WAHA media proxy — both stream bytes behind the session).
+    if (
+      url.startsWith("/api/whatsapp/media/") ||
+      url.startsWith("/api/whatsapp/waha-media")
+    ) {
       try {
         const res = await fetch(url);
         if (!res.ok) throw new Error("Failed to load media");
