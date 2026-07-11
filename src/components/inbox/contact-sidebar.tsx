@@ -15,6 +15,8 @@ import {
   DollarSign,
   StickyNote,
   Plus,
+  Sparkles,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -32,6 +34,7 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
   const [tags, setTags] = useState<(Tag & { contact_tag_id: string })[]>([]);
   const [newNote, setNewNote] = useState("");
   const [addingNote, setAddingNote] = useState(false);
+  const [summarizing, setSummarizing] = useState(false);
 
   const fetchContactData = useCallback(async () => {
     if (!contact) return;
@@ -114,6 +117,32 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
     }
     setAddingNote(false);
   }, [contact, newNote, accountId]);
+
+  // Ask the AI route to summarize this contact's conversation. The route
+  // resolves the conversation from the contact id, writes a contact note,
+  // and mirrors the summary onto the matching lead. Prepend the returned
+  // note so it appears immediately.
+  const handleSummarize = useCallback(async () => {
+    if (!contact || summarizing) return;
+    setSummarizing(true);
+    try {
+      const res = await fetch("/api/whatsapp/summarize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contact_id: contact.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "Falha ao resumir a conversa.");
+        return;
+      }
+      if (data.note) setNotes((prev) => [data.note, ...prev]);
+    } catch {
+      alert("Falha ao resumir a conversa.");
+    } finally {
+      setSummarizing(false);
+    }
+  }, [contact, summarizing]);
 
   if (!contact) {
     return (
@@ -252,9 +281,24 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
 
           {/* Notes */}
           <div>
-            <div className="flex items-center gap-2 px-1 text-xs font-medium uppercase tracking-wider text-gray-400">
-              <StickyNote className="h-3 w-3" />
-              Notes
+            <div className="flex items-center justify-between gap-2 px-1">
+              <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-gray-400">
+                <StickyNote className="h-3 w-3" />
+                Notes
+              </div>
+              <button
+                onClick={handleSummarize}
+                disabled={summarizing}
+                title="Gerar resumo da conversa com IA"
+                className="flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium text-primary transition-colors hover:bg-primary/10 disabled:opacity-50"
+              >
+                {summarizing ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Sparkles className="h-3 w-3" />
+                )}
+                {summarizing ? "Resumindo…" : "Resumir conversa"}
+              </button>
             </div>
             <div className="mt-2">
               <div className="flex gap-2">
