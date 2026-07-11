@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
+import { displayInitial, displayName } from "@/lib/profile-display";
 import { LogOut, Menu, Settings as SettingsIcon, User } from "lucide-react";
 import {
   Avatar,
@@ -46,10 +47,8 @@ export function Header({ onOpenSidebar }: HeaderProps) {
   const { profile, signOut } = useAuth();
   const title = getPageTitle(pathname);
 
-  const initial =
-    profile?.full_name?.charAt(0)?.toUpperCase() ??
-    profile?.email?.charAt(0)?.toUpperCase() ??
-    "U";
+  const name = displayName(profile);
+  const initial = displayInitial(profile);
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-gray-200 bg-gray-100 px-4 lg:px-6">
@@ -85,7 +84,7 @@ export function Header({ onOpenSidebar }: HeaderProps) {
             </AvatarFallback>
           </Avatar>
           <span className="hidden text-sm font-medium text-gray-900 sm:inline">
-            {profile?.full_name ?? "User"}
+            {name}
           </span>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -95,7 +94,7 @@ export function Header({ onOpenSidebar }: HeaderProps) {
         >
           <div className="px-2 py-1.5">
             <p className="truncate text-sm font-medium text-gray-900">
-              {profile?.full_name ?? "User"}
+              {name}
             </p>
             <p className="truncate text-xs text-gray-500">
               {profile?.email ?? ""}

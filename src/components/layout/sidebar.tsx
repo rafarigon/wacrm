@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useTotalUnread } from "@/hooks/use-total-unread";
+import { displayInitial, displayName } from "@/lib/profile-display";
 import {
   Crown,
   Flame,
@@ -318,14 +319,12 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                   />
                 ) : null}
                 <AvatarFallback className="bg-primary/10 text-sm font-medium text-primary">
-                  {profile?.full_name?.charAt(0)?.toUpperCase() ??
-                    profile?.email?.charAt(0)?.toUpperCase() ??
-                    "U"}
+                  {displayInitial(profile)}
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-gray-900">
-                  {profile?.full_name ?? "User"}
+                  {displayName(profile)}
                 </p>
                 <p className="truncate text-xs text-gray-500">
                   {profile?.email ?? ""}
