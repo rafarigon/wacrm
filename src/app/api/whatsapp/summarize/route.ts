@@ -47,12 +47,12 @@ const MEDIA_LABEL: Record<string, string> = {
 export async function POST(request: Request) {
   try {
     // Fail fast with a clear message if the key isn't set in the
-    // environment — otherwise the SDK call would 401 opaquely.
-    if (!process.env.ANTHROPIC_API_KEY) {
+    // environment — otherwise the Gemini call would 400 opaquely.
+    if (!process.env.GEMINI_API_KEY) {
       return NextResponse.json(
         {
           error:
-            'Resumo por IA não configurado: falta ANTHROPIC_API_KEY nas variáveis de ambiente do projeto.',
+            'Resumo por IA não configurado: falta GEMINI_API_KEY nas variáveis de ambiente do projeto.',
         },
         { status: 503 },
       )
