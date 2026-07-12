@@ -33,7 +33,10 @@ export interface ConversationSummary {
   resumo: string
 }
 
-const MODEL = 'gemini-2.5-flash'
+// gemini-2.5-flash is closed to new API accounts ("no longer available
+// to new users") — the account's key was created after the cutoff, so we
+// use the current stable flash instead.
+const MODEL = 'gemini-3.5-flash'
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`
 
 const SYSTEM_PROMPT = `Você é um assistente de CRM da RR Incorporações, uma incorporadora imobiliária de Curitiba. Recebe a transcrição de uma conversa de WhatsApp entre um corretor/atendente e um contato.
@@ -70,6 +73,7 @@ const OUTPUT_SCHEMA = {
 interface GeminiResponse {
   candidates?: Array<{
     content?: { parts?: Array<{ text?: string }> }
+    finishReason?: string
   }>
   error?: { message?: string }
 }
@@ -98,7 +102,11 @@ export async function summarizeConversation(
       generationConfig: {
         responseMimeType: 'application/json',
         responseSchema: OUTPUT_SCHEMA,
-        maxOutputTokens: 1024,
+        // Flash 3.x reasons internally before answering and that spends
+        // from the SAME output budget — too low a cap returns an empty
+        // body with finishReason MAX_TOKENS. 8192 leaves ample headroom;
+        // the schema keeps the actual JSON small regardless.
+        maxOutputTokens: 8192,
         temperature: 0.2,
       },
     }),
@@ -109,11 +117,16 @@ export async function summarizeConversation(
     throw new Error(data.error?.message || `Gemini API error: ${response.status}`)
   }
 
-  const text = (data.candidates?.[0]?.content?.parts ?? [])
+  const candidate = data.candidates?.[0]
+  const text = (candidate?.content?.parts ?? [])
     .map((p) => p.text ?? '')
     .join('')
     .trim()
-  if (!text) throw new Error('Gemini returned an empty response.')
+  if (!text) {
+    throw new Error(
+      `Gemini returned an empty response (finishReason: ${candidate?.finishReason ?? 'unknown'}).`,
+    )
+  }
 
   const parsed = JSON.parse(text) as ConversationSummary
   const tipo: ContactCategory = CONTACT_CATEGORIES.includes(parsed.tipo)
