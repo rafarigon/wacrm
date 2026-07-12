@@ -244,6 +244,11 @@ function ConversationItem({
       })
     : "";
 
+  // Unread rows stand out WhatsApp-style: bolder name + darker/bolder
+  // preview, so a read vs. unread conversation is distinguishable at a
+  // glance — not just by the small count badge on the right.
+  const hasUnread = conversation.unread_count > 0;
+
   return (
     <button
       onClick={handleClick}
@@ -268,13 +273,30 @@ function ConversationItem({
       {/* Content */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <span className="truncate text-sm font-medium text-gray-900">
+          <span
+            className={cn(
+              "truncate text-sm text-gray-900",
+              hasUnread ? "font-bold" : "font-medium",
+            )}
+          >
             {displayName}
           </span>
-          <span className="shrink-0 text-[10px] text-gray-400">{timeAgo}</span>
+          <span
+            className={cn(
+              "shrink-0 text-[10px]",
+              hasUnread ? "font-semibold text-primary" : "text-gray-400",
+            )}
+          >
+            {timeAgo}
+          </span>
         </div>
         <div className="mt-0.5 flex items-center justify-between gap-2">
-          <p className="truncate text-xs text-gray-500">
+          <p
+            className={cn(
+              "truncate text-xs",
+              hasUnread ? "font-semibold text-gray-900" : "text-gray-500",
+            )}
+          >
             {conversation.last_message_text || "No messages yet"}
           </p>
           <div className="flex shrink-0 items-center gap-1.5">
