@@ -1,18 +1,17 @@
 /**
  * Conversation summarizer + contact classifier (RR customization).
  *
- * Isolates the Anthropic SDK behind one function so the API route stays
- * provider-agnostic. Uses Claude Haiku 4.5 — a WhatsApp conversation
- * summary is a short, high-volume task, so the cheapest capable model is
- * the right default. Reads ANTHROPIC_API_KEY from the environment (the
- * route checks it's present before calling).
+ * Isolates the LLM call behind one function so the API route stays
+ * provider-agnostic. Uses Google Gemini Flash — the API's free tier costs
+ * nothing and needs no credit card, which fits an on-demand summary
+ * button. Called via plain fetch (same idiom as waha-api.ts); reads
+ * GEMINI_API_KEY from the environment (the route checks it's present
+ * before calling).
  *
- * Returns a structured result (JSON schema output) so the route gets both
- * a human-readable summary AND a machine-usable contact category to drive
- * auto-tagging, in a single model call.
+ * Returns a structured result (responseSchema-enforced JSON) so the route
+ * gets both a human-readable summary AND a machine-usable contact
+ * category to drive auto-tagging, in a single model call.
  */
-
-import Anthropic from '@anthropic-ai/sdk'
 
 export interface TranscriptLine {
   sender: 'customer' | 'agent'
@@ -34,7 +33,8 @@ export interface ConversationSummary {
   resumo: string
 }
 
-const MODEL = 'claude-haiku-4-5'
+const MODEL = 'gemini-2.5-flash'
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`
 
 const SYSTEM_PROMPT = `Você é um assistente de CRM da RR Incorporações, uma incorporadora imobiliária de Curitiba. Recebe a transcrição de uma conversa de WhatsApp entre um corretor/atendente e um contato.
 
@@ -55,20 +55,24 @@ Próximo passo: o que ficou combinado ou o que o corretor deve fazer, se houver.
 
 Não invente informações que não estão na conversa; se algo não foi mencionado, omita a linha.`
 
-// JSON-schema structured output: guarantees the response parses into
-// { tipo, resumo } instead of relying on the model to format free text.
+// responseSchema (OpenAPI subset, Gemini generationConfig): guarantees
+// the response parses into { tipo, resumo } instead of relying on the
+// model to format free text.
 const OUTPUT_SCHEMA = {
-  type: 'object',
+  type: 'OBJECT',
   properties: {
-    tipo: {
-      type: 'string',
-      enum: CONTACT_CATEGORIES,
-    },
-    resumo: { type: 'string' },
+    tipo: { type: 'STRING', enum: CONTACT_CATEGORIES },
+    resumo: { type: 'STRING' },
   },
   required: ['tipo', 'resumo'],
-  additionalProperties: false,
-} as const
+}
+
+interface GeminiResponse {
+  candidates?: Array<{
+    content?: { parts?: Array<{ text?: string }> }
+  }>
+  error?: { message?: string }
+}
 
 /**
  * Summarize + classify a WhatsApp conversation. Throws on API failure
@@ -82,22 +86,34 @@ export async function summarizeConversation(
     .map((l) => `${l.sender === 'customer' ? 'Cliente' : 'Atendente'}: ${l.text}`)
     .join('\n')
 
-  const client = new Anthropic()
-  const response = await client.messages.create({
-    model: MODEL,
-    max_tokens: 1024,
-    system: SYSTEM_PROMPT,
-    output_config: {
-      format: { type: 'json_schema', schema: OUTPUT_SCHEMA },
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': process.env.GEMINI_API_KEY || '',
     },
-    messages: [{ role: 'user', content: transcript }],
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents: [{ role: 'user', parts: [{ text: transcript }] }],
+      generationConfig: {
+        responseMimeType: 'application/json',
+        responseSchema: OUTPUT_SCHEMA,
+        maxOutputTokens: 1024,
+        temperature: 0.2,
+      },
+    }),
   })
 
-  const text = response.content
-    .filter((b): b is Anthropic.TextBlock => b.type === 'text')
-    .map((b) => b.text)
+  const data = (await response.json().catch(() => ({}))) as GeminiResponse
+  if (!response.ok) {
+    throw new Error(data.error?.message || `Gemini API error: ${response.status}`)
+  }
+
+  const text = (data.candidates?.[0]?.content?.parts ?? [])
+    .map((p) => p.text ?? '')
     .join('')
     .trim()
+  if (!text) throw new Error('Gemini returned an empty response.')
 
   const parsed = JSON.parse(text) as ConversationSummary
   const tipo: ContactCategory = CONTACT_CATEGORIES.includes(parsed.tipo)
